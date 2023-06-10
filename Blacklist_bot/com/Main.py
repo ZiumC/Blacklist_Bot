@@ -1,6 +1,6 @@
 from MessageHandler import Handler
-from commands import PublicCommands
-from commands import AdministrativeCommands
+from services import PublicService
+from services import AdminService
 import discord
 import os
 
