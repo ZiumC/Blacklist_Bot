@@ -5,6 +5,16 @@ class Handler:
         return True
 
     @staticmethod
+    async def is_message_length_valid(message, split_message, message_length):
+        if len(split_message) != message_length:
+            response_message = ":x: Command **{}** accepts only {} parameters but got {}."
+            await message.channel.send(response_message.format(split_message[0],
+                                                               message_length,
+                                                               len(split_message)))
+            return False
+        return True
+
+    @staticmethod
     def is_private_channel(message, channel_type):
         for channel in message.channel.type:
             if channel == channel_type:
