@@ -5,7 +5,7 @@ class PublicCommands(Enum):
     CHECK = "!check"
 
 
-async def process_command(message, channel):
+async def process_command(message, channel_name):
     split_message = message.content.split(' ')
 
     if len(split_message) != 2:
@@ -24,5 +24,5 @@ async def process_command(message, channel):
         response_message = ":x: Unable to resolve command **'{}'**. \n\n" \
                            ":green_circle: Available commands in chat **#{}** is:\n" \
                            "1) **!check** [username]"
-        await message.channel.send(response_message.format(command, channel))
+        await message.channel.send(response_message.format(command, channel_name))
         return

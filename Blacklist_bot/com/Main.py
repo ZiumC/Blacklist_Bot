@@ -1,5 +1,6 @@
 from MessageHandler import Handler
 from commands import PublicCommands
+from commands import AdministrativeCommands
 import discord
 import os
 
@@ -41,12 +42,15 @@ async def on_message(message):
     if message.channel.name == BL_PUBLIC_CHANNEL:
 
         await PublicCommands.process_command(message, BL_PUBLIC_CHANNEL)
+        return
 
     # handling moderation channel
     elif message.channel.name == BL_MODERATE_CHANNEL:
         if Handler.is_authorized(message, ADMINISTRATIVE_ROLE):
-            await message.channel.send("ok i see")
+
+            await AdministrativeCommands.process_command(message, BL_MODERATE_CHANNEL)
             return
+
         else:
             response_message = ":no_entry: Sorry {} but you are unauthorized to do that."
             await message.channel.send(response_message.format(message.author.name))
