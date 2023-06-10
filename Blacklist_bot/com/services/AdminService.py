@@ -17,18 +17,21 @@ async def process_command(message, channel_name):
     split_message = message.content.split(' ')
 
     command = split_message[0]
+    username = split_message[1]
 
     if command == AdminCommands.ADD.value:
         if not await handler.is_message_length_valid(message, split_message, COMMAND_LENGTH_3):
             return
 
+        description_reason = split_message[2]
         await message.channel.send('Add new person')
         return
-
+    
     elif command == AdminCommands.MODIFY.value:
         if not await handler.is_message_length_valid(message, split_message, COMMAND_LENGTH_3):
             return
-        
+
+        description_reason = split_message[2]
         await message.channel.send('Modify person')
         return
 
