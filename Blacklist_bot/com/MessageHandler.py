@@ -5,10 +5,15 @@ class Handler:
         return True
 
     @staticmethod
-    def is_private_channel(message):
-        private_channel = message.channel.type[0]
-        return private_channel == 'private'
+    def is_private_channel(message, channel_type):
+        for channel in message.channel.type:
+            if channel == channel_type:
+                return True
+        return False
 
     @staticmethod
     def is_authorized(message, role):
-        return message.author.top_role == role
+        for user_role in message.author.roles:
+            if user_role.name == role:
+                return True
+        return False
