@@ -1,14 +1,16 @@
 from MessageHandler import Handler
+from typing import Final
 from services import PublicService
 from services import AdminService
 import discord
 import os
 
-DISCORD_TOKEN = os.getenv('DiscordToken')
-PRIVATE_CHANNEL = 'private'
-ADMINISTRATIVE_ROLE = 'nowa rola'
-BL_PUBLIC_CHANNEL = 'ogólny'
-BL_MODERATE_CHANNEL = 'moderacja'
+DISCORD_TOKEN: Final[str] = os.getenv('DiscordToken')
+PRIVATE_CHANNEL: Final[str] = 'private'
+ADMINISTRATIVE_ROLE: Final[str] = 'nowa rola'
+BL_PUBLIC_CHANNEL: Final[str] = 'ogólny'
+BL_MODERATE_CHANNEL: Final[str] = 'moderacja'
+PATH_TO_FILE: Final[str] = ''
 
 intent = discord.Intents.default()
 intent.message_content = True
@@ -41,14 +43,14 @@ async def on_message(message):
     # handling public channel
     if message.channel.name == BL_PUBLIC_CHANNEL:
 
-        await PublicCommands.process_command(message, BL_PUBLIC_CHANNEL)
+        await PublicService.process_command(message, BL_PUBLIC_CHANNEL)
         return
 
     # handling moderation channel
     elif message.channel.name == BL_MODERATE_CHANNEL:
         if Handler.is_authorized(message, ADMINISTRATIVE_ROLE):
 
-            await AdministrativeCommands.process_command(message, BL_MODERATE_CHANNEL)
+            await AdminService.process_command(message, BL_MODERATE_CHANNEL)
             return
 
         else:
@@ -59,5 +61,6 @@ async def on_message(message):
         response_message = ":octagonal_sign: Sorry, I can only answer on channels {} or {}."
         await message.channel.send(response_message.format(BL_PUBLIC_CHANNEL, BL_MODERATE_CHANNEL))
         return
+
 
 client.run(DISCORD_TOKEN)
