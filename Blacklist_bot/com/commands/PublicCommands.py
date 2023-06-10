@@ -9,12 +9,13 @@ async def process_command(message, channel):
     split_message = message.content.split(' ')
 
     if len(split_message) != 2:
-        response_message = "Sorry, but I accept only 2 parameters."
-        await message.channel.send(response_message)
+        response_message = ":x: Sorry I accept only 2 parameters but passed {}. \n\n" \
+                           ":arrow_forward: Input i have received: {}."
+        await message.channel.send(response_message.format(len(split_message), message.content))
         return
 
-    command = split_message[0].replace("\\s", "")
-    username = split_message[1].replace("\\s", "")
+    command = split_message[0]
+    username = split_message[1]
 
     if command == PublicCommands.CHECK.value:
         await message.channel.send('Hello!')
@@ -25,4 +26,3 @@ async def process_command(message, channel):
                            "1) **!check** [username]"
         await message.channel.send(response_message.format(command, channel))
         return
-
