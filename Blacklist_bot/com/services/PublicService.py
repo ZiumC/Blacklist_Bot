@@ -1,4 +1,5 @@
 from enum import Enum
+import FileService
 
 
 class PublicCommands(Enum):
@@ -18,6 +19,8 @@ async def process_command(message, channel_name):
     username = split_message[1]
 
     if command == PublicCommands.CHECK.value:
+
+
         await message.channel.send('Hello!')
         return
     else:

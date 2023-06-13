@@ -1,5 +1,6 @@
 from enum import Enum
 from com import MessageHandler
+import FileService
 
 COMMAND_LENGTH_3 = 3
 COMMAND_LENGTH_2 = 2
@@ -24,9 +25,11 @@ async def process_command(message, channel_name):
             return
 
         description_reason = split_message[2]
+        FileService.add_user_to_bl(username, description_reason)
+
         await message.channel.send('Add new person')
         return
-    
+
     elif command == AdminCommands.MODIFY.value:
         if not await handler.is_message_length_valid(message, split_message, COMMAND_LENGTH_3):
             return
