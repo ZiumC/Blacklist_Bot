@@ -36,7 +36,7 @@ async def on_message(message):
 
     # checking if command starts with special character
     if not message.content.startswith('!'):
-        response_message = "Sorry but command: '{}' doesn't start with '!'".format(message.content)
+        response_message = "Sorry but command doesn't start with '!'"
         await message.channel.send(response_message)
         return
 
@@ -48,15 +48,18 @@ async def on_message(message):
 
     # handling moderation channel
     elif message.channel.name == BL_MODERATE_CHANNEL:
-        if Handler.is_authorized(message, ADMINISTRATIVE_ROLE):
+        try:
+            if Handler.is_authorized(message, ADMINISTRATIVE_ROLE):
 
-            await AdminService.process_command(message, BL_MODERATE_CHANNEL)
-            return
+                await AdminService.process_command(message, BL_MODERATE_CHANNEL)
+                return
 
-        else:
-            response_message = ":no_entry: Sorry {} but you are unauthorized to do that."
-            await message.channel.send(response_message.format(message.author.name))
-            return
+            else:
+                response_message = ":no_entry: Sorry but you are unauthorized to do that."
+                await message.channel.send(response_message)
+                return
+        except Exception as e:
+            await message.channel.send("What the fuck are you doing you little piece of shit?")
     else:
         response_message = ":octagonal_sign: Sorry, I can only answer on channels {} or {}."
         await message.channel.send(response_message.format(BL_PUBLIC_CHANNEL, BL_MODERATE_CHANNEL))
