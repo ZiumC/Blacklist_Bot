@@ -45,27 +45,34 @@ async def process_command(message):
     if not await handler.is_message_length_valid(message, command_part, COMMAND_LENGTH_2):
         return
 
+    username = command_part[1]
+
     if command == AdminCommands.ADD.value:
+
         username = command_part[1]
         description_reason = split_message[2]
 
         if file.add_user_to_bl(message.author.name, username, description_reason):
-            response = ":green_circle: Player " + s.safe_string(username) + \
-                      " has been added to black list! :heart:"
+            response = ":green_circle: Player **" + s.safe_string(username) + \
+                      "** has been added to black list! :heart:"
             await message.channel.send(response)
         else:
-            response = ":x: Unable to add " + s.safe_string(username) + " to black list! :broken_heart:"
+            response = ":x: Unable to add **" + s.safe_string(username) + "** to black list! :broken_heart:"
             await message.channel.send(response)
         return
 
     elif command == AdminCommands.MODIFY.value:
-        username = command_part[1]
         description_reason = split_message[1]
         await message.channel.send('Modify person')
         return
 
     elif command == AdminCommands.DELETE.value:
-        await message.channel.send('Delete person')
+        if file.remove_user_from_bl(username):
+            response = ":green_circle: Player **" + username + "** has been removed from black list! :heart:"
+            await message.channel.send(response)
+        else:
+            response = ":x: Unable to remove **" + username + "** from black list! :broken_heart:"
+            await message.channel.send(response)
         return
 
     else:
