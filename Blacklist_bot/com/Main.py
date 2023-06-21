@@ -55,18 +55,18 @@ async def on_message(message):
 
     # handling moderation channel
     elif message.channel.name == BL_MODERATE_CHANNEL:
-        try:
+        # try:
             if Handler.is_authorized(message, ADMINISTRATIVE_ROLE):
 
-                await AdminService.process_command(message, BL_MODERATE_CHANNEL)
+                await AdminService.process_command(message)
                 return
 
             else:
                 response_message = ":no_entry: Sorry but you are unauthorized to do that."
                 await message.channel.send(response_message)
                 return
-        except Exception as e:
-            await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
+        # except Exception as e:
+        #     await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
     else:
         response_message = ":octagonal_sign: Sorry, I can only answer on channels "\
                            + s.safe_string(BL_PUBLIC_CHANNEL) + " or " + s.safe_string(BL_MODERATE_CHANNEL) + "."
