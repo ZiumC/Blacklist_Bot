@@ -49,7 +49,12 @@ async def process_command(message):
 
     if command == AdminCommands.ADD.value:
 
-        username = command_part[1]
+        if file.get_user_data(username) != "":
+            response = ":warning: Player " + username + " already exist in black list. Instead of adding new " \
+                       "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
+            await message.channel.send(response)
+            return
+
         description_reason = split_message[2]
 
         if file.add_user_to_bl(message.author.name, username, description_reason):
