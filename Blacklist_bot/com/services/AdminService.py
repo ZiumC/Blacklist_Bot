@@ -44,7 +44,8 @@ async def process_command(message):
     if not await handler.is_message_length_valid(message, command_part, COMMAND_LENGTH_2):
         return
 
-    username = command_part[1]
+    username = str.lower(command_part[1])
+    author = s.safe_string(message.author.name)
 
     if command == AdminCommands.ADD.value:
         if file.get_user_data(username) != "":
@@ -53,7 +54,7 @@ async def process_command(message):
             await message.channel.send(response)
             return
         description_reason = split_message[2]
-        if file.add_user_to_bl(message.author.name, username, description_reason):
+        if file.add_user_to_bl(author, username, description_reason):
             response = ":green_circle: Player **" + s.safe_string(username) + \
                       "** has been added to black list! :heart:"
             await message.channel.send(response)
@@ -63,8 +64,18 @@ async def process_command(message):
         return
 
     elif command == AdminCommands.MODIFY.value:
-        description_reason = split_message[1]
-        await message.channel.send('Modify person')
+        if file.get_user_data(username) != "":
+            response = ":warning: Player " + username + " already exist in black list. Instead of adding new " \
+                       "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
+            await message.channel.send(response)
+            return
+        description_reason = split_message[2]
+        if file.update_user_data(author, username, description_reason):
+            response = ":green_circle: Player **" + username + "** has beem updated! :heart:"
+            await message.channel.send(response)
+        else:
+            response = ":x: Unable to update **" + username + "**! :broken_heart:"
+            await message.channel.send(response)
         return
 
     elif command == AdminCommands.DELETE.value:

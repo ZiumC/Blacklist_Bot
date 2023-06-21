@@ -21,7 +21,7 @@ def remove_user_from_bl(username_to_remove):
             all_lines = file.readlines()
         with open(bl_path, "w") as file:
             for line in all_lines:
-                if not s.contains(line.strip("\n"), username_to_remove):
+                if not s.contains(line, username_to_remove):
                     file.write(line)
         return True
     else:
@@ -46,9 +46,11 @@ def update_user_data(who_updated, username, description):
             all_lines = file.readlines()
         with open(bl_path, "w") as file:
             for line in all_lines:
-                if s.contains(line.strip("\n"), username):
+                if s.contains(line, username):
                     file.write(prepare_line_to_write(who_updated, username, description))
-                    return True
+                else:
+                    file.write(line)
+            return True
     else:
         return False
 
