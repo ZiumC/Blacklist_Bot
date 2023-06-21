@@ -8,9 +8,7 @@ USERS_LIST = []
 
 
 def add_user_to_bl(who_added, username_to_bl, description):
-
     file = open(bl_path, mode="a")
-
     if os.path.exists(bl_path):
         line_to_write = s.safe_string(username_to_bl) + "," + \
                         s.safe_string(description).replace(",", " ").replace("  ", " ") + "," \
@@ -18,6 +16,20 @@ def add_user_to_bl(who_added, username_to_bl, description):
                         + s.safe_string(who_added) + "\n"
         file.write(line_to_write)
         file.close()
+        return True
+    else:
+        return False
+
+
+def remove_user_from_bl(username_to_remove):
+
+    if os.path.exists(bl_path):
+        with open(bl_path, "r") as file:
+            all_lines = file.readlines()
+        with open(bl_path, "w") as file:
+            for line in all_lines:
+                if not s.contains(line.strip("\n"), username_to_remove):
+                    file.write(line)
         return True
     else:
         return False
