@@ -1,5 +1,5 @@
 from discord.ext import commands
-
+from com.SafeStr import SafeStr as s
 from com.MessageHandler import Handler
 from typing import Final
 import com.services.PublicCommandService as PublicCommandService
@@ -39,7 +39,7 @@ async def on_message(message):
 
     # checking if command starts with special character
     if not message.content.startswith('!'):
-        response_message = "Sorry but command doesn't start with '!'"
+        response_message = ":x: Sorry but command doesn't start with '!'"
         await message.channel.send(response_message)
         return
 
@@ -49,7 +49,7 @@ async def on_message(message):
             await PublicCommandService.process_command(message, BL_PUBLIC_CHANNEL)
             return
         except Exception as e:
-            await message.channel.send("What the fuck are you doing you little piece of shit?")
+            await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
 
     # handling moderation channel
     elif message.channel.name == BL_MODERATE_CHANNEL:
@@ -64,9 +64,10 @@ async def on_message(message):
                 await message.channel.send(response_message)
                 return
         except Exception as e:
-            await message.channel.send("What the fuck are you doing you little piece of shit?")
+            await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
     else:
-        response_message = ":octagonal_sign: Sorry, I can only answer on channels " + BL_PUBLIC_CHANNEL + " or " + BL_MODERATE_CHANNEL + "."
+        response_message = ":octagonal_sign: Sorry, I can only answer on channels "\
+                           + s.safe_string(BL_PUBLIC_CHANNEL) + " or " + s.safe_string(BL_MODERATE_CHANNEL) + "."
         await message.channel.send(response_message)
         return
 

@@ -1,6 +1,6 @@
 from enum import Enum
 from com.services import FileService
-import com.SafeStr as m
+from com.SafeStr import SafeStr as s
 
 
 class PublicCommands(Enum):
@@ -11,7 +11,7 @@ async def process_command(message, channel_name):
     split_message = message.content.split(' ')
 
     if len(split_message) != 2:
-        response_message = ":x: Sorry I accept only 2 parameters but passed "+m.SafeStr.safe_string(len(split_message))+". \n\n"
+        response_message = ":x: Sorry I accept only 2 parameters but passed "+s.safe_string(len(split_message))+"."
         await message.channel.send(response_message)
         return
 
@@ -19,12 +19,12 @@ async def process_command(message, channel_name):
     username = split_message[1]
 
     if command == PublicCommands.CHECK.value:
-        print(m.SafeStr.safe_string(username))
+        print(s.safe_string(username))
         await message.channel.send('Hello!')
         return
     else:
-        response_message = ":x: Unable to resolve command **'" + m.SafeStr.safe_string(command) + "'**. \n\n" \
-                           ":green_circle: Available commands in chat **#" + m.SafeStr.safe_string(channel_name) + "** is:\n" \
-                           "1) **!check** [username]"
+        response_message = ":x: Unable to resolve command **'" + s.safe_string(command) + "'**. \n\n" \
+                           ":green_circle: Available commands in chat **#" + s.safe_string(channel_name) + "** is:\n" \
+                           "1) **" + s.safe_string(PublicCommands.CHECK.value) + "** [username]"
         await message.channel.send(response_message)
         return
