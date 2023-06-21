@@ -1,6 +1,7 @@
 from enum import Enum
 from com import MessageHandler
 from com.services import FileService
+import com.SafeStr as m
 
 COMMAND_LENGTH_3 = 3
 COMMAND_LENGTH_2 = 2
@@ -43,13 +44,10 @@ async def process_command(message, channel_name):
         return
 
     else:
-        response_message = ":x: Unable to resolve command **'"+command+"'**. \n\n" \
-                           ":green_circle: Available commands in chat **#{}** is:\n" \
-                           "1) **{}** [username] [description]\n" \
-                           "2) **{}** [username] [description]\n" \
-                           "3) **{}** [username]"
-        await message.channel.send(response_message.format(channel_name,
-                                                           AdminCommands.ADD.value,
-                                                           AdminCommands.MODIFY.value,
-                                                           AdminCommands.DELETE.value))
+        response_message = ":x: Unable to resolve command **'" + m.SafeStr.safe_string(command) + "'**. \n\n" \
+                           ":green_circle: Available commands in chat **#" + m.SafeStr.safe_string(channel_name) + "** is:\n" \
+                           "1) **" + m.SafeStr.safe_string(AdminCommands.ADD.value) + "** [username] [description]\n" \
+                           "2) **" + m.SafeStr.safe_string(AdminCommands.MODIFY.value) + "** [username] [description]\n" \
+                           "3) **" + m.SafeStr.safe_string(AdminCommands.DELETE.value) + "** [username]"
+        await message.channel.send(response_message)
         return
