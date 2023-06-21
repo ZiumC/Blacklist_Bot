@@ -1,7 +1,9 @@
-from MessageHandler import Handler
+from discord.ext import commands
+
+from com.MessageHandler import Handler
 from typing import Final
-from services import PublicService
-from services import AdminService
+import com.services.PublicCommandService as PublicCommandService
+from com.services import AdminService
 import discord
 import os
 
@@ -24,6 +26,7 @@ async def on_ready():
 
 
 @client.event
+@commands.cooldown(1, 30, commands.BucketType.user)
 async def on_message(message):
     if message.author == client.user:
         return
@@ -42,9 +45,11 @@ async def on_message(message):
 
     # handling public channel
     if message.channel.name == BL_PUBLIC_CHANNEL:
-
-        await PublicService.process_command(message, BL_PUBLIC_CHANNEL)
-        return
+        try:
+            await PublicCommandService.process_command(message, BL_PUBLIC_CHANNEL)
+            return
+        except Exception as e:
+            await message.channel.send("What the fuck are you doing you little piece of shit?")
 
     # handling moderation channel
     elif message.channel.name == BL_MODERATE_CHANNEL:
@@ -61,8 +66,8 @@ async def on_message(message):
         except Exception as e:
             await message.channel.send("What the fuck are you doing you little piece of shit?")
     else:
-        response_message = ":octagonal_sign: Sorry, I can only answer on channels {} or {}."
-        await message.channel.send(response_message.format(BL_PUBLIC_CHANNEL, BL_MODERATE_CHANNEL))
+        response_message = ":octagonal_sign: Sorry, I can only answer on channels " + BL_PUBLIC_CHANNEL + " or " + BL_MODERATE_CHANNEL + "."
+        await message.channel.send(response_message)
         return
 
 
