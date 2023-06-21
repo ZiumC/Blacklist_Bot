@@ -1,3 +1,6 @@
+from com.SafeStr import SafeStr as s
+
+
 class Handler:
 
     @staticmethod
@@ -7,10 +10,12 @@ class Handler:
     @staticmethod
     async def is_message_length_valid(message, split_message, message_length):
         if len(split_message) != message_length:
-            response_message = ":x: Command **{}** accepts only {} parameters but got {}."
-            await message.channel.send(response_message.format(split_message[0],
-                                                               message_length,
-                                                               len(split_message)))
+
+            response_message = ":x: Command **" + s.safe_string(split_message[0]) \
+                               + "** accepts only " + s.safe_string(message_length) + " parameters but got " \
+                               + s.safe_string(len(split_message)) + "."
+
+            await message.channel.send(response_message)
             return False
         return True
 

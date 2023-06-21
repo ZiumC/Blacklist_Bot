@@ -1,4 +1,4 @@
-from com import Main
+from com.SafeStr import SafeStr
 
 USERS_LIST = []
 
