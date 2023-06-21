@@ -2,6 +2,7 @@ from enum import Enum
 from com import MessageHandler
 from com.services import FileService as file
 from com.SafeStr import SafeStr as s
+import re as regex
 
 
 COMMAND_LENGTH_2 = 2
@@ -27,7 +28,8 @@ async def process_command(message):
     handler = MessageHandler.Handler
     command_to_process = s.safe_string(message.content)
 
-    split_message = command_to_process.split(' -')
+    # split_message = command_to_process.split("( -|-)")
+    split_message = regex.split("(\\s+-|-)", command_to_process)
 
     command_part = split_message[0].split(' ')
     command = command_part[0]
@@ -45,9 +47,9 @@ async def process_command(message):
 
     if command == AdminCommands.ADD.value:
         username = command_part[1]
-        description_reason = split_message[1]
+        description_reason = split_message[2]
 
-        if file.add_user_to_bl(username, description_reason):
+        if file.add_user_to_bl(message.author.name, username, description_reason):
             response = ":green_circle: Player " + s.safe_string(username) + \
                       " has been added to black list! :heart:"
             await message.channel.send(response)

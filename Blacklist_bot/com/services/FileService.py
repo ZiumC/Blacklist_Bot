@@ -6,13 +6,16 @@ import os
 USERS_LIST = []
 
 
-def add_user_to_bl(username, description):
+def add_user_to_bl(who_added, username_to_bl, description):
 
     file = open(bl_path, mode="a")
 
     if os.path.exists(bl_path):
-        text_to_write = str(date.today()) + "," + s.safe_string(username) + "," + s.safe_string(description) + "\n"
-        file.write(text_to_write)
+        line_to_write = s.safe_string(username_to_bl) + "," + \
+                        s.safe_string(description).replace(",", " ").replace("  ", " ") + "," \
+                        + str(date.today()) + ","\
+                        + s.safe_string(who_added) + "\n"
+        file.write(line_to_write)
         file.close()
         return True
     else:
