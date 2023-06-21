@@ -12,7 +12,8 @@ PRIVATE_CHANNEL: Final[str] = 'private'
 ADMINISTRATIVE_ROLE: Final[str] = 'nowa rola'
 BL_PUBLIC_CHANNEL: Final[str] = 'ogólny'
 BL_MODERATE_CHANNEL: Final[str] = 'moderacja'
-PATH_TO_FILE: Final[str] = ''
+PATH_TO_BLOCKED_USERS_FILE: Final[str] = os.getenv('PATH_TO_BLOCKED_USERS_FILE')
+PATH_TO_LOG_FILE: Final[str] = os.getenv('PATH_TO_LOG_FILE')
 
 intent = discord.Intents.default()
 intent.message_content = True
@@ -27,6 +28,7 @@ async def on_ready():
 
 @client.event
 @commands.cooldown(1, 30, commands.BucketType.user)
+@commands.guild_only()
 async def on_message(message):
     if message.author == client.user:
         return
