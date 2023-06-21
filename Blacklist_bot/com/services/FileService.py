@@ -1,6 +1,7 @@
 from com.SafeStr import SafeStr as s
 from com.Main import PATH_TO_BLOCKED_USERS_FILE as bl_path
 from datetime import date
+from datetime import datetime
 import os
 
 USERS_LIST = []
@@ -13,7 +14,7 @@ def add_user_to_bl(who_added, username_to_bl, description):
     if os.path.exists(bl_path):
         line_to_write = s.safe_string(username_to_bl) + "," + \
                         s.safe_string(description).replace(",", " ").replace("  ", " ") + "," \
-                        + str(date.today()) + ","\
+                        + datetime.strptime(str(date.today()), "%Y-%m-%d").strftime('%d/%m/%Y') + ","\
                         + s.safe_string(who_added) + "\n"
         file.write(line_to_write)
         file.close()
