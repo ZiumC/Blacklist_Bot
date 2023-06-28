@@ -15,7 +15,7 @@ class AdminCommands(Enum):
     HELP = '!help'
 
 
-COMMAND_TO_IGNORE_MARK = [AdminCommands.DELETE.value, AdminCommands.HELP.value]
+COMMAND_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value]
 
 help_message = ":green_circle: Available commands in chat **#" + s.safe_string('a') + "** is:\n"\
                "1) **" + s.safe_string(AdminCommands.HELP.value) + "**\n" \
@@ -33,7 +33,7 @@ async def process_command(message):
     command_part = split_message[0].split(' ')
     command = command_part[0]
 
-    if command not in COMMAND_TO_IGNORE_MARK and not s.contains(command_to_process, '-'):
+    if command not in COMMAND_TO_IGNORE and not s.contains(command_to_process, '-'):
         await message.channel.send(":x: Did you forget about mark:'-'? :thinking:")
         return
 
@@ -64,9 +64,8 @@ async def process_command(message):
         return
 
     elif command == AdminCommands.MODIFY.value:
-        if file.get_user_data(username) != "":
-            response = ":warning: Player " + username + " already exist in black list. Instead of adding new " \
-                       "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
+        if file.get_user_data(username) == "":
+            response = ":x: Player " + username + " to modify **not found** :cry:"
             await message.channel.send(response)
             return
         description_reason = split_message[2]
