@@ -14,6 +14,7 @@ BL_PUBLIC_CHANNEL: Final[str] = 'ogólny'
 BL_MODERATE_CHANNEL: Final[str] = 'moderacja'
 PATH_TO_BLOCKED_USERS_FILE: Final[str] = os.getenv('PATH_TO_BLOCKED_USERS_FILE')
 PATH_TO_LOG_FILE: Final[str] = os.getenv('PATH_TO_LOG_FILE')
+MAX_MESSAGE_LENGTH = 1999
 
 intent = discord.Intents.default()
 intent.message_content = True
@@ -47,11 +48,11 @@ async def on_message(message):
 
     # handling public channel
     if message.channel.name == BL_PUBLIC_CHANNEL:
-        try:
+        # try:
             await PublicCommandService.process_command(message, BL_PUBLIC_CHANNEL)
             return
-        except Exception as e:
-            await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
+        # except Exception as e:
+        #     await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
 
     # handling moderation channel
     elif message.channel.name == BL_MODERATE_CHANNEL:

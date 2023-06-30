@@ -1,6 +1,8 @@
 from enum import Enum
 from com.services import FileService as file
 from com.SafeStr import SafeStr as s
+from com.MessageHandler import Handler
+from com import Main as m
 
 
 class PublicCommands(Enum):
@@ -22,15 +24,19 @@ async def process_command(message, channel_name):
     if command == PublicCommands.CHECK.value:
         user_data = file.get_user_data(username)
         if user_data != "":
-            response = ":octagonal_sign: Player **" + username + \
-                       "** exist on black list! :face_with_symbols_over_mouth:\n\n"
-            await message.channel.send(response)
             sections_data = user_data.split(",")
-            header_reason = ":information_source: Player **" + username + "** has been added to black list by **" \
-                            + sections_data[3] + "** at **" + sections_data[2] + "**.\n"
-            await message.channel.send(header_reason)
+            response = ":octagonal_sign: Player **" + username + \
+                       "** exist on black list! :face_with_symbols_over_mouth:\n\n " \
+                       ":information_source: Player **" + username + "** has been added to black list by **" \
+                       + sections_data[3] + "** at **" + sections_data[2] + "**.\n"
+            await message.channel.send(response)
             reason = ":arrow_right: Reason: " + sections_data[1]
-            await message.channel.send(reason)
+            if len(reason) > m.MAX_MESSAGE_LENGTH:
+                reason_chunks = Handler.divide_message(reason, m.MAX_MESSAGE_LENGTH)
+                for reason_line in reason_chunks:
+                    await message.channel.send(reason_line)
+            else:
+                await message.channel.send(reason)
             return
         else:
             response = ":white_check_mark: Player **not found!**"
@@ -41,6 +47,6 @@ async def process_command(message, channel_name):
         response_message = ":x: Unable to resolve command **'" \
                            + s.safe_string(command) + "'**. \n\n" \
                             ":green_circle: Available commands in chat **#" + s.safe_string(channel_name) + "** is:\n" \
-                            "1) **" + s.safe_string(PublicCommands.CHECK.value) + "** [username]"
+                            "1) **" + PublicCommands.CHECK.value + "** [username]"
         await message.channel.send(response_message)
         return
