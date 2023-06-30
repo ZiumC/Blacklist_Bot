@@ -14,6 +14,7 @@ class SafeStr:
 
         filtered = str(value)
         filtered = EMOJI_PATTERN.sub(r'', filtered)
+        filtered = str.lower(filtered)
         for word in BANNED_WORDS:
             try:
                 filtered.index(word)
