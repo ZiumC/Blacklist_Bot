@@ -49,7 +49,7 @@ async def process_command(message):
 
     if command == AdminCommands.ADD.value:
         if file.get_user_data(username) != "":
-            response = ":warning: Player " + username + " already exist in black list. Instead of adding new " \
+            response = ":warning: Player **" + username + "** already exist in black list. Instead of adding new " \
                        "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
             await message.channel.send(response)
             return
@@ -65,7 +65,7 @@ async def process_command(message):
 
     elif command == AdminCommands.MODIFY.value:
         if file.get_user_data(username) == "":
-            response = ":x: Player " + username + " to modify **not found** :cry:"
+            response = ":x: Player **" + username + "** to modify **not found** :cry:"
             await message.channel.send(response)
             return
         description_reason = split_message[2]
