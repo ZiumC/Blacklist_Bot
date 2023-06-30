@@ -8,7 +8,8 @@ class PublicCommands(Enum):
 
 
 async def process_command(message, channel_name):
-    split_message = s.safe_string(message.content).split(' ')
+    safe_string = s.safe_string(message.content)
+    split_message = safe_string.split(' ')
 
     if len(split_message) != 2:
         response_message = ":x: Sorry I accept only 2 parameters but passed " + s.safe_string(len(split_message)) + "."
@@ -16,7 +17,7 @@ async def process_command(message, channel_name):
         return
 
     command = split_message[0]
-    username = split_message[1]
+    username = str.lower(split_message[1])
 
     if command == PublicCommands.CHECK.value:
         user_data = file.get_user_data(username)
