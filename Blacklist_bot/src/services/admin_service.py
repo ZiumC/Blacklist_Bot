@@ -1,11 +1,10 @@
-from enum import Enum
-from src import message_handler
-from src.services import file_service as file
-from src.safe_str import SafeStr as s
 import re as regex
+from enum import Enum
+import src.config as conf
+from src.services import file_service
+from src.safe_str import SafeStr as sStr
+from src.message_handler import Handler as messHandler
 
-
-COMMAND_LENGTH_2 = 2
 
 
 class AdminCommands(Enum):
@@ -15,25 +14,24 @@ class AdminCommands(Enum):
     HELP = '!help'
 
 
-COMMAND_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value]
+COMMANDS_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value]
 
-help_message = ":green_circle: Available commands in chat **#" + s.safe_string('a') + "** is:\n"\
-               "1) **" + s.safe_string(AdminCommands.HELP.value) + "**\n" \
-               "2) **" + s.safe_string(AdminCommands.ADD.value) + "** [username] -[description]\n" \
-               "3) **" + s.safe_string(AdminCommands.MODIFY.value) + "** [username] -[description]\n" \
-               "4) **" + s.safe_string(AdminCommands.DELETE.value) + "** [username]"
+help_message = ":green_circle: Available commands in chat **#" + conf.MODERATION_CHANNEL_BL + "** is:\n"\
+               "1) **" + AdminCommands.HELP.value + "**\n" \
+               "2) **" + AdminCommands.ADD.value + "** [username] -[description]\n" \
+               "3) **" + AdminCommands.MODIFY.value + "** [username] -[description]\n" \
+               "4) **" + AdminCommands.DELETE.value + "** [username]"
 
 
 async def process_command(message):
-    handler = message_handler.Handler
-    command_to_process = s.safe_string(message.content)
+    command_to_process = sStr.safe_string(message.content)
 
     split_message = regex.split("(\\s+-|-)", command_to_process)
 
     command_part = split_message[0].split(' ')
     command = command_part[0]
 
-    if command not in COMMAND_TO_IGNORE and not s.contains(command_to_process, '-'):
+    if command not in COMMANDS_TO_IGNORE and not sStr.contains(command_to_process, '-'):
         await message.channel.send(":x: Did you forget about mark:'-'? :thinking:")
         return
 
@@ -41,35 +39,35 @@ async def process_command(message):
         await message.channel.send(help_message)
         return
 
-    if not await handler.is_message_length_valid(message, command_part, COMMAND_LENGTH_2):
+    if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_COMMAND_LENGTH):
         return
 
+    author = sStr.safe_string(message.author.name)
     username = str.lower(command_part[1])
-    author = s.safe_string(message.author.name)
 
     if command == AdminCommands.ADD.value:
-        if file.get_user_data(username) != "":
+        if file_service.get_user_data(username) != "":
             response = ":warning: Player **" + username + "** already exist in black list. Instead of adding new " \
                        "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
             await message.channel.send(response)
             return
         description_reason = split_message[2]
-        if file.add_user_to_bl(author, username, description_reason):
-            response = ":green_circle: Player **" + s.safe_string(username) + \
+        if file_service.add_user_to_bl(author, username, description_reason):
+            response = ":green_circle: Player **" + username + \
                       "** has been added to black list! :heart:"
             await message.channel.send(response)
         else:
-            response = ":x: Unable to add **" + s.safe_string(username) + "** to black list! :broken_heart:"
+            response = ":x: Unable to add **" + username + "** to black list! :broken_heart:"
             await message.channel.send(response)
         return
 
     elif command == AdminCommands.MODIFY.value:
-        if file.get_user_data(username) == "":
+        if file_service.get_user_data(username) == "":
             response = ":x: Player **" + username + "** to modify **not found** :cry:"
             await message.channel.send(response)
             return
         description_reason = split_message[2]
-        if file.update_user_data(author, username, description_reason):
+        if file_service.update_user_data(author, username, description_reason):
             response = ":green_circle: Player **" + username + "** has beem updated! :heart:"
             await message.channel.send(response)
         else:
@@ -78,7 +76,7 @@ async def process_command(message):
         return
 
     elif command == AdminCommands.DELETE.value:
-        if file.remove_user_from_bl(username):
+        if file_service.remove_user_from_bl(username):
             response = ":green_circle: Player **" + username + "** has been removed from black list! :heart:"
             await message.channel.send(response)
         else:

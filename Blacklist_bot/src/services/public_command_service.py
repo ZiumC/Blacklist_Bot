@@ -1,8 +1,8 @@
 from enum import Enum
-from src.services import file_service as file
-from src.safe_str import SafeStr as s
-from src.message_handler import Handler
-from src import main as m
+import src.config as conf
+from src.services import file_service
+from src.safe_str import SafeStr as sStr
+from src.message_handler import Handler as messHandler
 
 
 class PublicCommands(Enum):
@@ -10,11 +10,12 @@ class PublicCommands(Enum):
 
 
 async def process_command(message, channel_name):
-    safe_string = s.safe_string(message.content)
+    safe_string = sStr.safe_string(message.content)
     split_message = safe_string.split(' ')
 
     if len(split_message) != 2:
-        response_message = ":x: Sorry I accept only 2 parameters but passed " + s.safe_string(len(split_message)) + "."
+        response_message = ":x: Sorry I accept only 2 parameters but passed " \
+                           + str(len(split_message)) + "."
         await message.channel.send(response_message)
         return
 
@@ -22,7 +23,7 @@ async def process_command(message, channel_name):
     username = str.lower(split_message[1])
 
     if command == PublicCommands.CHECK.value:
-        user_data = file.get_user_data(username)
+        user_data = file_service.get_user_data(username)
         if user_data != "":
             sections_data = user_data.split(",")
             response = ":octagonal_sign: Player **" + username + \
@@ -31,8 +32,8 @@ async def process_command(message, channel_name):
                        + sections_data[3] + "** at **" + sections_data[2] + "**.\n"
             await message.channel.send(response)
             reason = ":arrow_right: Reason: " + sections_data[1]
-            if len(reason) > m.MAX_MESSAGE_LENGTH:
-                reason_chunks = Handler.divide_message(reason, m.MAX_MESSAGE_LENGTH)
+            if len(reason) > conf.MAX_MESSAGE_LENGTH:
+                reason_chunks = messHandler.divide_message(reason, conf.MAX_MESSAGE_LENGTH)
                 for reason_line in reason_chunks:
                     await message.channel.send(reason_line)
             else:
@@ -44,9 +45,9 @@ async def process_command(message, channel_name):
             return
 
     else:
-        response_message = ":x: Unable to resolve command **'" \
-                           + s.safe_string(command) + "'**. \n\n" \
-                            ":green_circle: Available commands in chat **#" + s.safe_string(channel_name) + "** is:\n" \
+        response_message = ":x: Unable to resolve command **'" + command + \
+                           "'**. \n\n :green_circle: Available commands in chat **#" + \
+                           sStr.safe_string(channel_name) + "** is:\n" \
                             "1) **" + PublicCommands.CHECK.value + "** [username]"
         await message.channel.send(response_message)
         return
