@@ -1,8 +1,8 @@
 from enum import Enum
-from com.services import FileService as file
-from com.SafeStr import SafeStr as s
-from com.MessageHandler import Handler
-from com import Main as m
+from src.services import file_service as file
+from src.safe_str import SafeStr as s
+from src.message_handler import Handler
+from src import main as m
 
 
 class PublicCommands(Enum):

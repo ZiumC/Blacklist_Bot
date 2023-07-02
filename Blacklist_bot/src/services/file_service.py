@@ -1,5 +1,5 @@
-from com.SafeStr import SafeStr as s
-from com.Main import PATH_TO_BLOCKED_USERS_FILE as bl_path
+from src.safe_str import SafeStr as s
+from src.main import PATH_TO_BLOCKED_USERS_FILE as bl_path
 from datetime import date
 from datetime import datetime
 import os

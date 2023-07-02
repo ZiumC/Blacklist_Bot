@@ -1,9 +1,9 @@
 from discord.ext import commands
-from com.SafeStr import SafeStr as s
-from com.MessageHandler import Handler
+from src.safe_str import SafeStr as safe_string
+from src.message_handler import Handler
 from typing import Final
-import com.services.PublicCommandService as PublicCommandService
-from com.services import AdminService
+import src.services.public_command_service as public_command
+from src.services import admin_service as admin_command
 import discord
 import os
 
@@ -49,7 +49,7 @@ async def on_message(message):
     # handling public channel
     if message.channel.name == BL_PUBLIC_CHANNEL:
         # try:
-            await PublicCommandService.process_command(message, BL_PUBLIC_CHANNEL)
+            await public_command.process_command(message, BL_PUBLIC_CHANNEL)
             return
         # except Exception as e:
         #     await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
@@ -59,7 +59,7 @@ async def on_message(message):
         # try:
             if Handler.is_authorized(message, ADMINISTRATIVE_ROLE):
 
-                await AdminService.process_command(message)
+                await admin_command.process_command(message)
                 return
 
             else:
@@ -69,8 +69,8 @@ async def on_message(message):
         # except Exception as e:
         #     await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
     else:
-        response_message = ":octagonal_sign: Sorry, I can only answer on channels "\
-                           + s.safe_string(BL_PUBLIC_CHANNEL) + " or " + s.safe_string(BL_MODERATE_CHANNEL) + "."
+        response_message = ":octagonal_sign: Sorry, I can only answer on channels " \
+                           + safe_string.safe_string(BL_PUBLIC_CHANNEL) + " or " + safe_string.safe_string(BL_MODERATE_CHANNEL) + "."
         await message.channel.send(response_message)
         return
 
