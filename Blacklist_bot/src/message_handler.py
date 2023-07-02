@@ -45,3 +45,12 @@ class Handler:
                 position = 0
         message_chunks.append(message_chunk)
         return message_chunks
+
+    @staticmethod
+    def contains(string, target):
+        try:
+            string.index(target)
+        except ValueError:
+            return False
+        else:
+            return True
