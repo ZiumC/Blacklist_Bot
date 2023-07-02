@@ -1,4 +1,4 @@
-from com.SafeStr import SafeStr as s
+from src.safe_str import SafeStr as s
 
 
 class Handler:

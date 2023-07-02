@@ -1,7 +1,7 @@
 from enum import Enum
-from com import MessageHandler
-from com.services import FileService as file
-from com.SafeStr import SafeStr as s
+from src import message_handler
+from src.services import file_service as file
+from src.safe_str import SafeStr as s
 import re as regex
 
 
@@ -25,7 +25,7 @@ help_message = ":green_circle: Available commands in chat **#" + s.safe_string('
 
 
 async def process_command(message):
-    handler = MessageHandler.Handler
+    handler = message_handler.Handler
     command_to_process = s.safe_string(message.content)
 
     split_message = regex.split("(\\s+-|-)", command_to_process)
