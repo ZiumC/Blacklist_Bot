@@ -1,10 +1,10 @@
 import os
 import discord
 from discord.ext import commands
-from src.message_handler import Handler as messHandler
-import src.services.public_command_service as pub
-import src.services.admin_service as adm
 import src.config as conf
+import src.services.admin_service as adm
+import src.services.public_command_service as pub
+from src.message_handler import Handler as messHandler
 
 intent = discord.Intents.default()
 intent.message_content = True
@@ -18,7 +18,7 @@ async def on_ready():
 
 
 @client.event
-@commands.cooldown(1, conf.MAX_PROCESS_TIME, commands.BucketType.user)
+@commands.cooldown(1, conf.MAX_REQUEST_PROCESS_TIME, commands.BucketType.user)
 @commands.guild_only()
 async def on_message(message):
     if message.author == client.user:

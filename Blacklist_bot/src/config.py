@@ -1,12 +1,17 @@
 import os
 from typing import Final
 
+# Better to not modify this
 PRIVATE_CHANNEL: Final[str] = 'private'
+MAX_MESSAGE_LENGTH: Final[int] = 1999
+MAX_REQUEST_PROCESS_TIME: Final[int] = 30
+MAX_COMMAND_LENGTH: Final[int] = 2
+
+# Strongly recommended is to modify this configuration strings
 ADMINISTRATIVE_ROLE: Final[str] = 'nowa rola'
 PUBLIC_CHANNEL_BL: Final[str] = 'ogólny'
 MODERATION_CHANNEL_BL: Final[str] = 'moderacja'
-MAX_MESSAGE_LENGTH: Final[int] = 1999
-MAX_PROCESS_TIME: Final[int] = 30
 
+# Strongly recommended is that to use system environment
 PATH_TO_BLOCKED_USERS_FILE: Final[str] = os.getenv('PATH_TO_BLOCKED_USERS_FILE')
 PATH_TO_LOG_FILE: Final[str] = os.getenv('PATH_TO_LOG_FILE')
