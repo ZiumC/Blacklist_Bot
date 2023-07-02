@@ -6,7 +6,6 @@ from src.safe_str import SafeStr as sStr
 from src.message_handler import Handler as messHandler
 
 
-
 class AdminCommands(Enum):
     ADD = '!add'
     MODIFY = '!modify'
@@ -76,6 +75,10 @@ async def process_command(message):
         return
 
     elif command == AdminCommands.DELETE.value:
+        if file_service.get_user_data(username) == "":
+            response = ":x: Player **" + username + "** to delete **not found** :cry:"
+            await message.channel.send(response)
+            return
         if file_service.remove_user_from_bl(username):
             response = ":green_circle: Player **" + username + "** has been removed from black list! :heart:"
             await message.channel.send(response)
