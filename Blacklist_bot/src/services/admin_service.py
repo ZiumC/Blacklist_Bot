@@ -30,7 +30,7 @@ async def process_command(message):
     command_part = split_message[0].split(' ')
     command = command_part[0]
 
-    if command not in COMMANDS_TO_IGNORE and not sStr.contains(command_to_process, '-'):
+    if command not in COMMANDS_TO_IGNORE and not messHandler.contains(command_to_process, '-'):
         await message.channel.send(":x: Did you forget about mark:'-'? :thinking:")
         return
 

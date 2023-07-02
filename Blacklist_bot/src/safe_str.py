@@ -27,12 +27,3 @@ class SafeStr:
         for i in range(0, len(filtered)):
             result += filtered[i]
         return result
-
-    @staticmethod
-    def contains(string, target):
-        try:
-            string.index(target)
-        except ValueError:
-            return False
-        else:
-            return True

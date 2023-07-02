@@ -12,6 +12,9 @@ intent.message_content = True
 client = discord.Client(intents=intent)
 
 
+exception_response = "Your action that you are trying to perform is too shitty :angry: Ask Toxic Rafal to see bot log."
+
+
 @client.event
 async def on_ready():
     print('Discord bot runs as {}'.format(client.user))
@@ -42,22 +45,20 @@ async def on_message(message):
             await pub.process_command(message, conf.PUBLIC_CHANNEL_BL)
             return
         except Exception as e:
-            await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
+            await message.channel.send(exception_response)
 
     # handling moderation channel
     elif message.channel.name == conf.MODERATION_CHANNEL_BL:
         try:
             if messHandler.is_authorized(message, conf.ADMINISTRATIVE_ROLE):
-
                 await adm.process_command(message)
                 return
-
             else:
                 response_message = ":no_entry: Sorry but you are unauthorized to do that."
                 await message.channel.send(response_message)
                 return
         except Exception as e:
-            await message.channel.send("What the fuck are you doing you little piece of shit? :angry:")
+            await message.channel.send(exception_response)
     else:
         response_message = ":octagonal_sign: Sorry, I can only answer on channels " \
                            + conf.PUBLIC_CHANNEL_BL + " or " + conf.MODERATION_CHANNEL_BL + "."
