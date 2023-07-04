@@ -1,17 +1,9 @@
-from src.safe_str import SafeStr as sStr
-
-
 class Handler:
-
-    @staticmethod
-    def validate_message():
-        return True
 
     @staticmethod
     async def is_message_length_valid(message, split_message, message_length):
         if len(split_message) != message_length:
-            response_message = ":x: Command **" + sStr.safe_string(split_message[0]) \
-                               + "** accepts only " + sStr.safe_string(message_length) + " parameters but got " \
+            response_message = ":x: Command in this chat accepts only " + str(message_length) + " parameters but got " \
                                + str(len(split_message)) + "."
             await message.channel.send(response_message)
             return False

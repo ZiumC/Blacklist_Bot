@@ -16,7 +16,7 @@ class SafeStr:
         filtered = str(value)
         filtered = EMOJI_PATTERN.sub(r'', filtered)
         filtered = str.lower(filtered)
-        banned_words_detected = ""
+        banned_words_detected = "["
         for word in BANNED_WORDS:
             try:
                 filtered.index(word)
@@ -28,7 +28,7 @@ class SafeStr:
 
         if len(banned_words_detected) > 1:
             logging.critical(
-                "Banned words has been detected: user=" + user + ",detected_words=" + banned_words_detected
+                "Banned words has been detected: user=" + user + ",detected_words=" + banned_words_detected + "]"
                 + ",full_request=" + value
             )
 
