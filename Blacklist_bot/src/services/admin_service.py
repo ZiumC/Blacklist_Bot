@@ -38,7 +38,7 @@ async def process_command(message):
         await message.channel.send(help_message)
         return
 
-    if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_COMMAND_LENGTH):
+    if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_MODERATION_COMMAND_LENGTH):
         return
 
     author = sStr.safe_string(message.author.name)

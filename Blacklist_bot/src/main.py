@@ -14,7 +14,7 @@ intent.message_content = True
 client = discord.Client(intents=intent)
 
 
-exception_response = "Your action that you are trying to perform is too shitty :angry: Ask Toxic Rafal to see bot log."
+exception_response = "Something has been fucked so hard that exception has occurred :angry: Ask Toxic Rafal to see bot log."
 
 
 @client.event
@@ -46,10 +46,14 @@ async def on_message(message):
     # handling public channel
     if message.channel.name == conf.PUBLIC_CHANNEL_BL:
         try:
+            logging.info("Public command has been used: user=" + message.author.name)
             await pub.process_command(message, conf.PUBLIC_CHANNEL_BL)
             return
         except Exception as e:
-            logging.error("Public command error: user=" + message.author.name + ",message=" + sStr.safe_string(message.content))
+            logging.error(
+                "Public command error: user=" + message.author.name
+                + ",message=" + sStr.safe_string(message.content)
+            )
             logging.exception(e)
             await message.channel.send(exception_response)
 
@@ -57,14 +61,19 @@ async def on_message(message):
     elif message.channel.name == conf.MODERATION_CHANNEL_BL:
         try:
             if messHandler.is_authorized(message, conf.ADMINISTRATIVE_ROLE):
+                logging.info("Moderation command: authorization=SUCCESS,user=" + message.author.name)
                 await adm.process_command(message)
                 return
             else:
+                logging.info("Moderation command: authorization=FAILED,user=" + message.author.name)
                 response_message = ":no_entry: Sorry but you are unauthorized to do that."
                 await message.channel.send(response_message)
                 return
         except Exception as e:
-            logging.error("Private command error: user=" + message.author.name + ",message=" + sStr.safe_string(message.content))
+            logging.error(
+                "Private command error: user=" + message.author.name
+                + ",message=" + sStr.safe_string(message.content)
+            )
             logging.exception(e)
             await message.channel.send(exception_response)
     else:

@@ -3,9 +3,10 @@ from typing import Final
 
 # Better to not modify this
 PRIVATE_CHANNEL: Final[str] = 'private'
-MAX_MESSAGE_LENGTH: Final[int] = 1999
+MAX_DISCORD_MESSAGE_LENGTH: Final[int] = 1999
 MAX_REQUEST_PROCESS_TIME: Final[int] = 30
-MAX_COMMAND_LENGTH: Final[int] = 2
+MAX_MODERATION_COMMAND_LENGTH: Final[int] = 2
+MAX_PUBLIC_COMMAND_LENGTH: Final[int] = 2
 
 # Strongly recommended is to modify this configuration strings
 ADMINISTRATIVE_ROLE: Final[str] = 'nowa rola'
