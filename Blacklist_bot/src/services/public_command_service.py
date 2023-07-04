@@ -3,6 +3,7 @@ import src.config as conf
 from src.services import file_service
 from src.safe_str import SafeStr as sStr
 from src.message_handler import Handler as messHandler
+import logging
 
 
 class PublicCommands(Enum):
@@ -13,7 +14,12 @@ async def process_command(message, channel_name):
     safe_string = sStr.safe_string(message.content)
     split_message = safe_string.split(' ')
 
-    if len(split_message) != 2:
+    mess_length = len(split_message)
+    if mess_length != conf.MAX_PUBLIC_COMMAND_LENGTH:
+        logging.warning(
+            "Command length missmatch: user=" + message.author.name + ",current_length=" + str(mess_length)
+            + ",accepted_length=" + str(conf.MAX_PUBLIC_COMMAND_LENGTH)
+        )
         response_message = ":x: Sorry I accept only 2 parameters but passed " \
                            + str(len(split_message)) + "."
         await message.channel.send(response_message)
@@ -32,8 +38,9 @@ async def process_command(message, channel_name):
                        + sections_data[3] + "** at **" + sections_data[2] + "**.\n"
             await message.channel.send(response)
             reason = ":arrow_right: Reason: " + sections_data[1]
-            if len(reason) > conf.MAX_MESSAGE_LENGTH:
-                reason_chunks = messHandler.divide_message(reason, conf.MAX_MESSAGE_LENGTH)
+            if len(reason) > conf.MAX_DISCORD_MESSAGE_LENGTH:
+                logging.info("Response reason was split")
+                reason_chunks = messHandler.divide_message(reason, conf.MAX_DISCORD_MESSAGE_LENGTH)
                 for reason_line in reason_chunks:
                     await message.channel.send(reason_line)
             else:
@@ -45,6 +52,7 @@ async def process_command(message, channel_name):
             return
 
     else:
+        logging.error("Command missmatch: user=" + message.author.name + ",full_command=" + safe_string)
         response_message = ":x: Unable to resolve command **'" + command + \
                            "'**. \n\n :green_circle: Available commands in chat **#" + \
                            sStr.safe_string(channel_name) + "** is:\n" \
