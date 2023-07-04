@@ -38,7 +38,10 @@ async def on_message(message):
 
     # checking if command starts with special character
     if not message.content.startswith('!'):
-        logging.warning("Message doesn't start with '!': message=" + sStr.safe_string(message.content))
+        logging.warning(
+            "Message doesn't start with '!': user=" + message.author.name
+            + ",message=" + sStr.safe_string(message.content)
+        )
         response_message = ":x: Sorry but command doesn't start with '!'"
         await message.channel.send(response_message)
         return
@@ -61,11 +64,11 @@ async def on_message(message):
     elif message.channel.name == conf.MODERATION_CHANNEL_BL:
         try:
             if messHandler.is_authorized(message, conf.ADMINISTRATIVE_ROLE):
-                logging.info("Moderation command: authorization=SUCCESS,user=" + message.author.name)
+                logging.info("Moderation command: user=" + message.author.name + ",authorization=SUCCESS")
                 await adm.process_command(message)
                 return
             else:
-                logging.info("Moderation command: authorization=FAILED,user=" + message.author.name)
+                logging.warning("Moderation command: user=" + message.author.name + ",authorization=FAILED")
                 response_message = ":no_entry: Sorry but you are unauthorized to do that."
                 await message.channel.send(response_message)
                 return
