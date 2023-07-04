@@ -44,6 +44,7 @@ async def process_command(message, channel_name):
                 await message.channel.send(reason)
             return
         else:
+            logging.info("Searched player not found (this is good)")
             response = ":white_check_mark: Player **not found!**"
             await message.channel.send(response)
             return

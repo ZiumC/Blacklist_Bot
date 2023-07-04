@@ -3,7 +3,6 @@ from datetime import date
 from datetime import datetime
 import src.config as conf
 from src.safe_str import SafeStr as sStr
-from src.message_handler import Handler as messHandler
 import logging
 
 
@@ -29,7 +28,7 @@ def remove_user_from_bl(username_to_remove):
         with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w") as file:
             for line in all_lines:
                 username_from_file = line.split(",")[0]
-                if messHandler.contains(username_from_file, username_to_remove):
+                if username_from_file == username_to_remove:
                     is_removed = True
                     pass
                 else:
@@ -53,9 +52,12 @@ def get_user_data(username_to_check):
             all_lines = file.readlines()
         for line in all_lines:
             username_from_file = line.split(",")[0]
-            if messHandler.contains(username_from_file, username_to_check):
+            if username_from_file == username_to_check:
                 return line
-        logging.warning("Empty line has been returned: method=" + get_user_data.__name__)
+        logging.warning(
+            "Empty line has been returned: player="
+            + username_to_check + ",method=" + get_user_data.__name__
+        )
         return ""
     else:
         logging.critical(
@@ -73,7 +75,7 @@ def update_user_data(who_updated, username, description):
         with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w") as file:
             for line in all_lines:
                 username_from_file = line.split(",")[0]
-                if messHandler.contains(username_from_file, username):
+                if username_from_file == username:
                     file.write(prepare_line_to_write(who_updated, username, description))
                     is_updated = True
                 else:
