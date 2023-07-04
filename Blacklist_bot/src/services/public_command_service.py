@@ -8,12 +8,26 @@ import logging
 
 class PublicCommands(Enum):
     CHECK = "!check"
+    HELP = "!help"
+
+
+COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
+
+help_message = ":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" \
+               "1) **" + PublicCommands.HELP.value + "**\n" \
+               "2) **" + PublicCommands.CHECK.value + "** [username]"
 
 
 async def process_command(message, channel_name):
     author = message.author.name
     safe_string = sStr.safe_string(message.content, author)
     split_message = safe_string.split(' ')
+
+    command = split_message[0]
+
+    if command == PublicCommands.HELP.value:
+        await message.channel.send(help_message)
+        return
 
     if not await messHandler.is_message_length_valid(message, split_message, conf.MAX_PUBLIC_COMMAND_LENGTH):
         logging.warning(
@@ -22,7 +36,6 @@ async def process_command(message, channel_name):
         )
         return
 
-    command = split_message[0]
     username = str.lower(split_message[1])
 
     if command == PublicCommands.CHECK.value:
@@ -51,9 +64,6 @@ async def process_command(message, channel_name):
 
     else:
         logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
-        response_message = ":x: Unable to resolve command **'" + command + \
-                           "'**. \n\n :green_circle: Available commands in chat **#" + \
-                           sStr.safe_string(channel_name, author) + "** is:\n" \
-                           "1) **" + PublicCommands.CHECK.value + "** [username]"
+        response_message = ":x: Unable to resolve command **'" + command + "'**.\n\n" + help_message
         await message.channel.send(response_message)
         return
