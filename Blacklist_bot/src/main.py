@@ -5,6 +5,7 @@ import src.config as conf
 import src.services.admin_service as adm
 import src.services.public_command_service as pub
 from src.message_handler import Handler as messHandler
+from src.safe_str import SafeStr as sStr
 import logging
 
 intent = discord.Intents.default()
@@ -29,13 +30,15 @@ async def on_message(message):
         return
 
     # checking if sent message comes from private channel
-    if messHandler.is_private_channel(message, conf.MODERATION_CHANNEL_BL):
+    if messHandler.is_private_channel(message, conf.PRIVATE_CHANNEL):
+        logging.warning("Message comes from private channel: user=" + message.author.name)
         response_message = ":x: Sorry but I can't handle private messages."
         await message.channel.send(response_message)
         return
 
     # checking if command starts with special character
     if not message.content.startswith('!'):
+        logging.warning("Message doesn't start with '!': message=" + sStr.safe_string(message.content))
         response_message = ":x: Sorry but command doesn't start with '!'"
         await message.channel.send(response_message)
         return
@@ -46,6 +49,8 @@ async def on_message(message):
             await pub.process_command(message, conf.PUBLIC_CHANNEL_BL)
             return
         except Exception as e:
+            logging.error("Public command error: user=" + message.author.name + ",message=" + sStr.safe_string(message.content))
+            logging.exception(e)
             await message.channel.send(exception_response)
 
     # handling moderation channel
@@ -59,8 +64,11 @@ async def on_message(message):
                 await message.channel.send(response_message)
                 return
         except Exception as e:
+            logging.error("Private command error: user=" + message.author.name + ",message=" + sStr.safe_string(message.content))
+            logging.exception(e)
             await message.channel.send(exception_response)
     else:
+        logging.error("Channel miss match: channel=" + message.channel.name)
         response_message = ":octagonal_sign: Sorry, I can only answer on channels " \
                            + conf.PUBLIC_CHANNEL_BL + " or " + conf.MODERATION_CHANNEL_BL + "."
         await message.channel.send(response_message)
