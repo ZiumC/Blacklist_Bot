@@ -11,12 +11,13 @@ class PublicCommands(Enum):
 
 
 async def process_command(message, channel_name):
-    safe_string = sStr.safe_string(message.content)
+    author = message.author.name
+    safe_string = sStr.safe_string(message.content, author)
     split_message = safe_string.split(' ')
 
     if not await messHandler.is_message_length_valid(message, split_message, conf.MAX_PUBLIC_COMMAND_LENGTH):
         logging.warning(
-            "Command length missmatch: user=" + message.author.name + ",current_length=" + str(len(split_message))
+            "Command length missmatch: user=" + author + ",current_length=" + str(len(split_message))
             + ",accepted_length=" + str(conf.MAX_PUBLIC_COMMAND_LENGTH)
         )
         return
@@ -48,10 +49,10 @@ async def process_command(message, channel_name):
             return
 
     else:
-        logging.error("Command missmatch: user=" + message.author.name + ",full_command=" + safe_string)
+        logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
         response_message = ":x: Unable to resolve command **'" + command + \
                            "'**. \n\n :green_circle: Available commands in chat **#" + \
-                           sStr.safe_string(channel_name) + "** is:\n" \
-                                                            "1) **" + PublicCommands.CHECK.value + "** [username]"
+                           sStr.safe_string(channel_name, author) + "** is:\n" \
+                           "1) **" + PublicCommands.CHECK.value + "** [username]"
         await message.channel.send(response_message)
         return
