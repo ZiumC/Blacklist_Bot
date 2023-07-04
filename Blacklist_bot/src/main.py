@@ -5,6 +5,7 @@ import src.config as conf
 import src.services.admin_service as adm
 import src.services.public_command_service as pub
 from src.message_handler import Handler as messHandler
+import logging
 
 intent = discord.Intents.default()
 intent.message_content = True
@@ -65,5 +66,12 @@ async def on_message(message):
         await message.channel.send(response_message)
         return
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%d/%m/%Y %H:%M:%S",
+    filename=conf.PATH_TO_LOG_FILE
+)
 
+logging.info("---- new run ----")
 client.run(os.getenv('DiscordToken'))
