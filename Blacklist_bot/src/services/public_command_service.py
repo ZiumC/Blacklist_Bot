@@ -14,15 +14,11 @@ async def process_command(message, channel_name):
     safe_string = sStr.safe_string(message.content)
     split_message = safe_string.split(' ')
 
-    mess_length = len(split_message)
-    if mess_length != conf.MAX_PUBLIC_COMMAND_LENGTH:
+    if not await messHandler.is_message_length_valid(message, split_message, conf.MAX_PUBLIC_COMMAND_LENGTH):
         logging.warning(
-            "Command length missmatch: user=" + message.author.name + ",current_length=" + str(mess_length)
+            "Command length missmatch: user=" + message.author.name + ",current_length=" + str(len(split_message))
             + ",accepted_length=" + str(conf.MAX_PUBLIC_COMMAND_LENGTH)
         )
-        response_message = ":x: Sorry I accept only 2 parameters but passed " \
-                           + str(len(split_message)) + "."
-        await message.channel.send(response_message)
         return
 
     command = split_message[0]
@@ -56,6 +52,6 @@ async def process_command(message, channel_name):
         response_message = ":x: Unable to resolve command **'" + command + \
                            "'**. \n\n :green_circle: Available commands in chat **#" + \
                            sStr.safe_string(channel_name) + "** is:\n" \
-                            "1) **" + PublicCommands.CHECK.value + "** [username]"
+                                                            "1) **" + PublicCommands.CHECK.value + "** [username]"
         await message.channel.send(response_message)
         return

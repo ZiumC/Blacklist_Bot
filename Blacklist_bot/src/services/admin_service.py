@@ -4,6 +4,7 @@ import src.config as conf
 from src.services import file_service
 from src.safe_str import SafeStr as sStr
 from src.message_handler import Handler as messHandler
+import logging
 
 
 class AdminCommands(Enum):
@@ -31,6 +32,7 @@ async def process_command(message):
     command = command_part[0]
 
     if command not in COMMANDS_TO_IGNORE and not messHandler.contains(command_to_process, '-'):
+        logging.warning("Incorrect command format: user=" + message.author.name + ",full_command=" + command_to_process)
         await message.channel.send(":x: Did you forget about mark:'-'? :thinking:")
         return
 
@@ -39,6 +41,10 @@ async def process_command(message):
         return
 
     if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_MODERATION_COMMAND_LENGTH):
+        logging.warning(
+            "Command length missmatch: user=" + message.author.name + ",current_length=" + str(len(command_part))
+            + ",accepted_length=" + str(conf.MAX_MODERATION_COMMAND_LENGTH)
+        )
         return
 
     author = sStr.safe_string(message.author.name)
@@ -88,6 +94,7 @@ async def process_command(message):
         return
 
     else:
+        logging.error("Command missmatch: user=" + message.author.name + ",full_command=" + command_to_process)
         response_message = ":x: Unable to resolve command **'" + command + "'**. \n\n" + help_message
         await message.channel.send(response_message)
         return
