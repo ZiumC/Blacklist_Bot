@@ -1,10 +1,10 @@
+import logging
 import re as regex
 from enum import Enum
 import src.config as conf
 from src.services import file_service
 from src.safe_str import SafeStr as sStr
 from src.message_handler import Handler as messHandler
-import logging
 
 
 class AdminCommands(Enum):

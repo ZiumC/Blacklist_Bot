@@ -1,9 +1,9 @@
 import os
+import logging
 from datetime import date
 from datetime import datetime
 import src.config as conf
 from src.safe_str import SafeStr as sStr
-import logging
 
 
 def add_user_to_bl(who_added, username_to_bl, description):

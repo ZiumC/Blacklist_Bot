@@ -1,20 +1,17 @@
 import os
 import discord
+import logging
 from discord.ext import commands
 import src.config as conf
 import src.services.admin_service as adm
 import src.services.public_command_service as pub
 from src.message_handler import Handler as messHandler
 from src.safe_str import SafeStr as sStr
-import logging
 
 intent = discord.Intents.default()
 intent.message_content = True
 
 client = discord.Client(intents=intent)
-
-
-exception_response = "Something has been fucked so hard that exception has occurred :angry: Ask Toxic Rafal to see bot log."
 
 
 @client.event
@@ -60,7 +57,7 @@ async def on_message(message):
                 + ",message=" + sStr.safe_string(message.content, author)
             )
             logging.exception(e)
-            await message.channel.send(exception_response)
+            await message.channel.send(conf.EXCEPTION_RESPONSE)
 
     # handling moderation channel
     elif message.channel.name == conf.MODERATION_CHANNEL_BL:
@@ -84,7 +81,7 @@ async def on_message(message):
                 + ",message=" + sStr.safe_string(message.content, author)
             )
             logging.exception(e)
-            await message.channel.send(exception_response)
+            await message.channel.send(conf.EXCEPTION_RESPONSE)
     else:
         logging.error("Channel miss match: channel=" + message.channel.name)
         response_message = ":octagonal_sign: Sorry, I can only answer on channels " \
