@@ -92,8 +92,8 @@ def update_user_data(who_updated, username, description):
 
 
 def prepare_line_to_write(who_prepared, username, description):
-    description = sStr.safe_string(description).replace(",", " ").replace("  ", " ")
-    username = sStr.safe_string(username)
+    description = sStr.safe_string(description, who_prepared).replace(",", " ").replace("  ", " ")
+    username = sStr.safe_string(username, who_prepared)
     line_date = datetime.strptime(str(date.today()), "%Y-%m-%d").strftime('%d/%m/%Y')
-    who_prepared = sStr.safe_string(who_prepared)
+    who_prepared = sStr.safe_string(who_prepared, who_prepared)
     return username + "," + description + "," + line_date + "," + who_prepared + "\n"

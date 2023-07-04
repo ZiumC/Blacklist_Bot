@@ -24,7 +24,8 @@ help_message = ":green_circle: Available commands in chat **#" + conf.MODERATION
 
 
 async def process_command(message):
-    command_to_process = sStr.safe_string(message.content)
+    author_unsafe = message.author.name
+    command_to_process = sStr.safe_string(message.content, author_unsafe)
 
     split_message = regex.split("(\\s+-|-)", command_to_process)
 
@@ -32,7 +33,7 @@ async def process_command(message):
     command = command_part[0]
 
     if command not in COMMANDS_TO_IGNORE and not messHandler.contains(command_to_process, '-'):
-        logging.warning("Incorrect command format: user=" + message.author.name + ",full_command=" + command_to_process)
+        logging.warning("Incorrect command format: user=" + author_unsafe + ",full_command=" + command_to_process)
         await message.channel.send(":x: Did you forget about mark:'-'? :thinking:")
         return
 
@@ -42,12 +43,12 @@ async def process_command(message):
 
     if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_MODERATION_COMMAND_LENGTH):
         logging.warning(
-            "Command length missmatch: user=" + message.author.name + ",current_length=" + str(len(command_part))
+            "Command length missmatch: user=" + author_unsafe + ",current_length=" + str(len(command_part))
             + ",accepted_length=" + str(conf.MAX_MODERATION_COMMAND_LENGTH) + ",full_command=" + command_to_process
         )
         return
 
-    author = sStr.safe_string(message.author.name)
+    author_safe = sStr.safe_string(author_unsafe, author_unsafe)
     username = str.lower(command_part[1])
 
     if command == AdminCommands.ADD.value:
@@ -57,15 +58,15 @@ async def process_command(message):
             await message.channel.send(response)
             return
         description_reason = split_message[2]
-        if file_service.add_user_to_bl(author, username, description_reason):
+        if file_service.add_user_to_bl(author_safe, username, description_reason):
             response = ":green_circle: Player **" + username + \
                       "** has been added to black list! :heart:"
-            logging.info("Added to BL: user=" + message.author.name + ",player=" + username)
+            logging.info("Added to BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(response)
         else:
             response = ":x: Unable to add **" + username + "** to black list! :broken_heart:"
             logging.warning(
-                "Unable to add to BL: user=" + message.author.name + ",player="
+                "Unable to add to BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
             await message.channel.send(response)
@@ -75,20 +76,20 @@ async def process_command(message):
         if file_service.get_user_data(username) == "":
             response = ":x: Player **" + username + "** to modify **not found** :cry:"
             logging.warning(
-                "Player to update not found: user=" + message.author.name + ",player="
+                "Player to update not found: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
             await message.channel.send(response)
             return
         description_reason = split_message[2]
-        if file_service.update_user_data(author, username, description_reason):
+        if file_service.update_user_data(author_safe, username, description_reason):
             response = ":green_circle: Player **" + username + "** has beem updated! :heart:"
-            logging.info("Updated player in BL: user=" + message.author.name + ",player=" + username)
+            logging.info("Updated player in BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(response)
         else:
             response = ":x: Unable to update **" + username + "**! :broken_heart:"
             logging.warning(
-                "Unable to update player in BL: user=" + message.author.name + ",player="
+                "Unable to update player in BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
             await message.channel.send(response)
@@ -98,26 +99,26 @@ async def process_command(message):
         if file_service.get_user_data(username) == "":
             response = ":x: Player **" + username + "** to delete **not found** :cry:"
             logging.warning(
-                "Player to delete not found: user=" + message.author.name + ",player="
+                "Player to delete not found: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
             await message.channel.send(response)
             return
         if file_service.remove_user_from_bl(username):
             response = ":green_circle: Player **" + username + "** has been removed from black list! :heart:"
-            logging.info("Deleted player from BL: user=" + message.author.name + ",player=" + username)
+            logging.info("Deleted player from BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(response)
         else:
             response = ":x: Unable to remove **" + username + "** from black list! :broken_heart:"
             logging.warning(
-                "Unable do delete player from BL: user=" + message.author.name + ",player="
+                "Unable do delete player from BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
             await message.channel.send(response)
         return
 
     else:
-        logging.error("Command missmatch: user=" + message.author.name + ",full_command=" + command_to_process)
+        logging.error("Command missmatch: user=" + author_unsafe + ",full_command=" + command_to_process)
         response_message = ":x: Unable to resolve command **'" + command + "'**. \n\n" + help_message
         await message.channel.send(response_message)
         return

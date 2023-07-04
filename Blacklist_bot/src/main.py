@@ -29,9 +29,11 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    author = message.author.name
+
     # checking if sent message comes from private channel
     if messHandler.is_private_channel(message, conf.PRIVATE_CHANNEL):
-        logging.warning("Message comes from private channel: user=" + message.author.name)
+        logging.warning("Message comes from private channel: user=" + author)
         response_message = ":x: Sorry but I can't handle private messages."
         await message.channel.send(response_message)
         return
@@ -39,8 +41,8 @@ async def on_message(message):
     # checking if command starts with special character
     if not message.content.startswith('!'):
         logging.warning(
-            "Message doesn't start with '!': user=" + message.author.name
-            + ",message=" + sStr.safe_string(message.content)
+            "Message doesn't start with '!': user=" + author
+            + ",message=" + sStr.safe_string(message.content, author)
         )
         response_message = ":x: Sorry but command doesn't start with '!'"
         await message.channel.send(response_message)
@@ -49,13 +51,13 @@ async def on_message(message):
     # handling public channel
     if message.channel.name == conf.PUBLIC_CHANNEL_BL:
         try:
-            logging.info("Public command has been used: user=" + message.author.name)
+            logging.info("Public command has been used: user=" + author)
             await pub.process_command(message, conf.PUBLIC_CHANNEL_BL)
             return
         except Exception as e:
             logging.error(
-                "Public command error: user=" + message.author.name
-                + ",message=" + sStr.safe_string(message.content)
+                "Public command error: user=" + author
+                + ",message=" + sStr.safe_string(message.content, author)
             )
             logging.exception(e)
             await message.channel.send(exception_response)
@@ -64,7 +66,7 @@ async def on_message(message):
     elif message.channel.name == conf.MODERATION_CHANNEL_BL:
         try:
             if messHandler.is_authorized(message, conf.ADMINISTRATIVE_ROLE):
-                logging.info("Moderation command: user=" + message.author.name + ",authorization=SUCCESS")
+                logging.info("Moderation command: user=" + author + ",authorization=SUCCESS")
                 await adm.process_command(message)
                 return
             else:
@@ -74,8 +76,8 @@ async def on_message(message):
                 return
         except Exception as e:
             logging.error(
-                "Private command error: user=" + message.author.name
-                + ",message=" + sStr.safe_string(message.content)
+                "Private command error: user=" + author
+                + ",message=" + sStr.safe_string(message.content, author)
             )
             logging.exception(e)
             await message.channel.send(exception_response)
