@@ -51,7 +51,7 @@ async def on_message(message):
     # handling public channel
     if message.channel.name == conf.PUBLIC_CHANNEL_BL:
         try:
-            logging.info("Public command has been used: user=" + author)
+            logging.info("Public command has been used: user=" + author + ",message=" + message.content)
             await pub.process_command(message, conf.PUBLIC_CHANNEL_BL)
             return
         except Exception as e:
@@ -66,11 +66,15 @@ async def on_message(message):
     elif message.channel.name == conf.MODERATION_CHANNEL_BL:
         try:
             if messHandler.is_authorized(message, conf.ADMINISTRATIVE_ROLE):
-                logging.info("Moderation command: user=" + author + ",authorization=SUCCESS")
+                logging.info(
+                    "Moderation command: user=" + author + ",authorization=SUCCESS, message=" + message.content
+                )
                 await adm.process_command(message)
                 return
             else:
-                logging.warning("Moderation command: user=" + message.author.name + ",authorization=FAILED")
+                logging.warning(
+                    "Moderation command: user=" + author + ",authorization=FAILED, message=" + message.content
+                )
                 response_message = ":no_entry: Sorry but you are unauthorized to do that."
                 await message.channel.send(response_message)
                 return
