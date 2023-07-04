@@ -50,6 +50,8 @@ ADMINISTRATIVE_ROLE: Final[str] = ''
 PUBLIC_CHANNEL_BL: Final[str] = ''
 # Administrative channel name that will be accessible for users who have proper permissions to modify blacklist
 MODERATION_CHANNEL_BL: Final[str] = ''
+# Your awesome exception message goes here
+EXCEPTION_RESPONSE: Final[str] = ''
 
 # Strongly recommended is that to use system environment
 # Set path to blacklist file. Note that, path should contain file name with extension (recommended file extension is .csv)
