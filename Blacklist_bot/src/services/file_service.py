@@ -4,6 +4,7 @@ from datetime import datetime
 import src.config as conf
 from src.safe_str import SafeStr as sStr
 from src.message_handler import Handler as messHandler
+import logging
 
 
 def add_user_to_bl(who_added, username_to_bl, description):
@@ -13,6 +14,10 @@ def add_user_to_bl(who_added, username_to_bl, description):
         file.close()
         return True
     else:
+        logging.critical(
+            "Path is invalid or doesn't exist. Path should also contain destination file: path="
+            + conf.PATH_TO_BLOCKED_USERS_FILE + ",method=" + add_user_to_bl.__name__
+        )
         return False
 
 
@@ -29,8 +34,16 @@ def remove_user_from_bl(username_to_remove):
                     pass
                 else:
                     file.write(line)
+        logging.info(
+            "Removing player: player=" + username_to_remove
+            + ",status=" + str(is_removed) + ",method=" + remove_user_from_bl.__name__
+        )
         return is_removed
     else:
+        logging.critical(
+            "Path is invalid or doesn't exist. Path should also contain destination file: path="
+            + conf.PATH_TO_BLOCKED_USERS_FILE + ",method=" + remove_user_from_bl.__name__
+        )
         return False
 
 
@@ -42,8 +55,13 @@ def get_user_data(username_to_check):
             username_from_file = line.split(",")[0]
             if messHandler.contains(username_from_file, username_to_check):
                 return line
+        logging.warning("Empty line has been returned: method=" + get_user_data.__name__)
         return ""
     else:
+        logging.critical(
+            "Path is invalid or doesn't exist. Path should also contain destination file: path="
+            + conf.PATH_TO_BLOCKED_USERS_FILE + ",method=" + get_user_data.__name__
+        )
         return ""
 
 
@@ -60,8 +78,16 @@ def update_user_data(who_updated, username, description):
                     is_updated = True
                 else:
                     file.write(line)
+            logging.info(
+                "Updating player: user=" + who_updated + ",player=" + username
+                + ",status=" + str(is_updated) + ",method=" + update_user_data.__name__
+            )
             return is_updated
     else:
+        logging.critical(
+            "Path is invalid or doesn't exist. Path should also contain destination file: path="
+            + conf.PATH_TO_BLOCKED_USERS_FILE + ",method=" + update_user_data.__name__
+        )
         return False
 
 
