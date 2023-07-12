@@ -1,9 +1,9 @@
 import logging
 from enum import Enum
-import src.config as conf
-from src.services import file_service
-from src.safe_str import SafeStr as sStr
-from src.message_handler import Handler as messHandler
+import config as conf
+from services import file_service
+from safe_str import SafeStr as sStr
+from message_handler import Handler as messHandler
 
 
 class PublicCommands(Enum):

@@ -1,11 +1,11 @@
 import discord
 import logging
 from discord.ext import commands
-import src.config as conf
-import src.services.admin_service as adm
-import src.services.public_command_service as pub
-from src.message_handler import Handler as messHandler
-from src.safe_str import SafeStr as sStr
+import config as conf
+import services.admin_service as adm
+import services.public_command_service as pub
+from message_handler import Handler as messHandler
+from safe_str import SafeStr as sStr
 
 intent = discord.Intents.default()
 intent.message_content = True
@@ -47,6 +47,14 @@ async def on_message(message):
         response_message = ":x: This bot can runs only in selected discord server." \
                            " This incident will be reported to owner of this bot. :rage:"
         await message.channel.send(response_message)
+        return
+
+    # checking if message should be ignored
+    if message.content.startswith('$'):
+        logging.warning(
+            "Message is going to be ignore: user=" + author
+            + ",message=" + sStr.safe_string(message.content, author)
+        )
         return
 
     # checking if command starts with special character

@@ -1,10 +1,10 @@
 import logging
 import re as regex
 from enum import Enum
-import src.config as conf
-from src.services import file_service
-from src.safe_str import SafeStr as sStr
-from src.message_handler import Handler as messHandler
+import config as conf
+from services import file_service
+from safe_str import SafeStr as sStr
+from message_handler import Handler as messHandler
 
 
 class AdminCommands(Enum):
@@ -20,7 +20,8 @@ help_message = ":green_circle: Available commands in chat **#" + conf.MODERATION
                "1) **" + AdminCommands.HELP.value + "**\n" \
                "2) **" + AdminCommands.ADD.value + "** [username] -[description]\n" \
                "3) **" + AdminCommands.MODIFY.value + "** [username] -[description]\n" \
-               "4) **" + AdminCommands.DELETE.value + "** [username]"
+               "4) **" + AdminCommands.DELETE.value + "** [username]\n" \
+               ":large_blue_diamond: If you want write only announce message, just type character **$** before your message and bot will ignore it."
 
 
 async def process_command(message):
