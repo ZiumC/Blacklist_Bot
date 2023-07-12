@@ -13,7 +13,10 @@ ADMINISTRATIVE_ROLE: Final[str] = ''
 PUBLIC_CHANNEL_BL: Final[str] = ''
 MODERATION_CHANNEL_BL: Final[str] = ''
 EXCEPTION_RESPONSE: Final[str] = ''
+GUILD_ID: Final[int] = 0
+DISCORD_TOKEN: Final[str] = ''
 
-# Strongly recommended is that to use system environment
-PATH_TO_BLOCKED_USERS_FILE: Final[str] = os.getenv('PATH_TO_BLOCKED_USERS_FILE')
-PATH_TO_LOG_FILE: Final[str] = os.getenv('PATH_TO_LOG_FILE')
+# Set paths to bod data files
+PATH_TO_BLOCKED_USERS_FILE: Final[str] = ''
+PATH_TO_LOG_FILE: Final[str] = ''
+

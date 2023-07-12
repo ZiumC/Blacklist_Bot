@@ -1,4 +1,3 @@
-import os
 import discord
 import logging
 from discord.ext import commands
@@ -32,6 +31,21 @@ async def on_message(message):
     if messHandler.is_private_channel(message, conf.PRIVATE_CHANNEL):
         logging.warning("Message comes from private channel: user=" + author)
         response_message = ":x: Sorry but I can't handle private messages."
+        await message.channel.send(response_message)
+        return
+
+    # checking if message comes from only selected discord server
+    guild_id = message.guild.id
+    guild_name = message.guild.name
+
+    if message.guild.id != conf.GUILD_ID:
+        logging.critical(
+            "Message comes from other guild than excepted: user="+author +
+            ",guild_id=" + str(guild_id) + ", guild_name=" + str(guild_name) +
+            ",message=" + sStr.safe_string(message.content, author)
+        )
+        response_message = ":x: This bot can runs only in selected discord server." \
+                           " This incident will be reported to owner of this bot. :rage:"
         await message.channel.send(response_message)
         return
 
@@ -97,4 +111,4 @@ logging.basicConfig(
 )
 
 logging.info("---- new run ----")
-client.run(os.getenv('DiscordToken'))
+client.run(conf.DISCORD_TOKEN)
