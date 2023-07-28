@@ -14,13 +14,13 @@ Bot for discord servers written in Python that allows to keep players in black l
 - Generates log to debug (or check) if something went wrong with programme.
 
 # How to run this bot?
-1) Firstly you should generate your discord token bot (<a href="https://www.writebots.com/discord-bot-token/" rel="nofollow">Tutorial how to do that</a>).  
+1) You should generate your discord token bot (<a href="https://www.writebots.com/discord-bot-token/" rel="nofollow">Tutorial how to do that</a>).  
 1.1) After that visit page <a href="https://discord.com/developers/applications" rel="nofollow">Discord Developer Portal</a>.  
 1.2) Select your bot and go to **BOT** fold.  
 1.3) Search for option ```MESSAGE CONTENT INTENT``` (this is near the end of page) and click on button to enable it (by default this is disabled and it causes an exception in program).  
-2) Secondly install docker on your machine. You can use ```docker desktop``` or ```docker command line```. I strongly recommend to use ```docker command line``` (further installation steps will be based on ```docker command line```).
-3) Thirdly install ```Python 3.9``` or ```Python 3.10``` on your local machine.
-4) Fourthly you should modify ```config.py``` file.
+2) Install docker on your machine. You can use ```docker desktop``` or ```docker command line```. I strongly recommend to use ```docker command line``` (further installation steps will be based on ```docker command line```).
+3) Install ```Python 3.9``` or ```Python 3.10``` on your local machine.
+4) Modify file ```config.py```.
 ```python
 import os
 from typing import Final
@@ -51,7 +51,7 @@ PATH_TO_BLOCKED_USERS_FILE: Final[str] = ''
 # Set path to blacklist log. Note that, path should contain file name with extension (recommended file extension is .txt)
 PATH_TO_LOG_FILE: Final[str] = ''
 ``` 
-5) Fivethly you should add ```Dockerfile``` to project. This file should be placed in ```src``` directory.
+5) Add ```Dockerfile``` to project. This file should be placed in ```src``` directory.
 ```Dockerfile
 FROM python:3.10  
 # creating directories for project in docker container  
@@ -82,7 +82,7 @@ ADD ./services/public_command_service.py /srv/src/services
 # running bot  
 CMD ["python", "/srv/src/main.py"]  
 ```
-6) (OPTIONAL) Sixthly you can limit resources used by docker container. To do that just add ```Docker-compose.yml``` to project. This file should be placed in ```src``` directory.
+6) (OPTIONAL) You can limit resources used by docker container. To do that just add ```Docker-compose.yml``` to project. This file should be placed in ```src``` directory.
 ```yml
 version: "3.9"
 service:
@@ -93,15 +93,10 @@ service:
     cpus: "1"
     cpuset: "2"
 ```
-7) Seventhly you have to build your image and run the container. In Linux to you have to type this commands:
-```linux
-# You have to go to bot src folder
-cd "/path/to/bot/project/on/local-machine/src"
-
-# Without changing directory just run the commands
-docker build -t [your-awesome-image-name] .
-docker run --name [your-awesome-container-name] [your-awesome-image-name]
-```
+7) Build your image and run the container. To do thad just follow these steps:    
+1. Go to ```src``` folder of project: ```cd "/path/to/bot/project/on/local-machine/src"```    
+2. Build your image: ```docker build -t [your-awesome-image-name] . ```    
+3. Run your docker container with image: ```ocker run --name [your-awesome-container-name] [your-awesome-image-name]```    
 
 # Troubleshooting with module names - python
 If your bot can't run due to exception ```No module named 'src'``` or ```Package doesn't have process_command(...)``` you have to modify imports of local packages - just add ```src.```.   
@@ -179,8 +174,13 @@ from src.services import file_service
 from src.safe_str import SafeStr as sStr
 from src.message_handler import Handler as messHandler
 ```  
-    
-    
+# Troubleshooting with temporary failure in name resolution [Errno -3]
+If you are running docker on linux machine, you may meet problem: 'temporary failure in name resolution' on bot startup. It may aquire because linux machine by default uses local DNS server delivered by your Internet operator. So if you connect to server discord.com every day, probably you won't see this problem. But if your local DNS doesn't cache current IP of discord.com, bot will stop working. To solve this problem you should follow these steps:
+1) Run command: ```sudo nano /etc/default/docker```
+2) Inside this file add line: ```DOCKER_OPTS="--dns 8.8.8.8 --dns 10.252.252.252"``` then save it
+3) Run command: ```docker restart```
+4) At the end run docker container
+
 # How to work with bot?  
 To run that bot on your discord server you should create 2 separate channels. First (public) channel will be accessible for everyone without any special role. Second channel (administrative) will be accessible for only users who had a **special administrative role**. That special role prevents untrusted users to perform actions such as adding, modifying or deleting users on blacklist.
 
