@@ -27,7 +27,7 @@ def remove_user_from_bl(username_to_remove):
             all_lines = file.readlines()
         with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w") as file:
             for line in all_lines:
-                username_from_file = line.split(",")[0]
+                username_from_file = line.split(conf.SEPARATOR)[0]
                 if username_from_file == username_to_remove:
                     is_removed = True
                     pass
@@ -51,7 +51,7 @@ def get_user_data(username_to_check):
         with open(conf.PATH_TO_BLOCKED_USERS_FILE, "r") as file:
             all_lines = file.readlines()
         for line in all_lines:
-            username_from_file = line.split(",")[0]
+            username_from_file = line.split(conf.SEPARATOR)[0]
             if username_from_file == username_to_check:
                 return line
         logging.warning(
@@ -93,7 +93,7 @@ def update_user_data(who_updated, username, description):
             all_lines = file.readlines()
         with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w") as file:
             for line in all_lines:
-                username_from_file = line.split(",")[0]
+                username_from_file = line.split(conf.SEPARATOR)[0]
                 if username_from_file == username:
                     file.write(prepare_line_to_write(who_updated, username, description))
                     is_updated = True
@@ -113,8 +113,8 @@ def update_user_data(who_updated, username, description):
 
 
 def prepare_line_to_write(who_prepared, username, description):
-    description = sStr.safe_string(description, who_prepared).replace(",", " ").replace("  ", " ")
+    description = sStr.safe_string(description, who_prepared)
     username = sStr.safe_string(username, who_prepared)
     line_date = datetime.strptime(str(date.today()), "%Y-%m-%d").strftime('%d/%m/%Y')
     who_prepared = sStr.safe_string(who_prepared, who_prepared)
-    return username + "," + description + "," + line_date + "," + who_prepared + "\n"
+    return username + conf.SEPARATOR + description + conf.SEPARATOR + line_date + conf.SEPARATOR + who_prepared + "\n"

@@ -41,7 +41,7 @@ async def process_command(message, channel_name):
     if command == PublicCommands.CHECK.value:
         user_data = file_service.get_user_data(username)
         if user_data != "":
-            sections_data = user_data.split(",")
+            sections_data = user_data.split(conf.SEPARATOR)
             response = ":octagonal_sign: Player **" + username + \
                        "** exist on black list! :face_with_symbols_over_mouth:\n\n " \
                        ":information_source: Player **" + username + "** has been added to black list by **" \
