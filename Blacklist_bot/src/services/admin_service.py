@@ -11,16 +11,19 @@ class AdminCommands(Enum):
     ADD = '!add'
     MODIFY = '!modify'
     DELETE = '!delete'
+    LAST = '!last'
     HELP = '!help'
 
 
-COMMANDS_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value]
+
+COMMANDS_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value, AdminCommands.LAST.value]
 
 help_message = ":green_circle: Available commands in chat **#" + conf.MODERATION_CHANNEL_BL + "** is:\n"\
                "1) **" + AdminCommands.HELP.value + "**\n" \
                "2) **" + AdminCommands.ADD.value + "** [username] -[description]\n" \
                "3) **" + AdminCommands.MODIFY.value + "** [username] -[description]\n" \
                "4) **" + AdminCommands.DELETE.value + "** [username]\n" \
+               "5) **" + AdminCommands.LAST.value + "**\n" \
                ":large_blue_diamond: If you want write only announce message, just type character **$** before your message and bot will ignore it."
 
 
@@ -40,6 +43,16 @@ async def process_command(message):
 
     if command == AdminCommands.HELP.value:
         await message.channel.send(help_message)
+        return
+    if command == AdminCommands.LAST.value:
+        last_user_data = file_service.get_last_user_data()
+        sections_data = last_user_data  .split(",")
+        last_user_name = sections_data[0]
+        response = ":orange_circle: Last added player to blacklist is **" + last_user_name + "**.\n\n" \
+                   ":information_source: Player has been added by **" + sections_data[3] + "** at **" + sections_data[2] + "**.\n" \
+                   ":arrow_right: Reason: " + sections_data[1]
+        logging.info("Checking last player: user=" + author_unsafe + ",last player=" + last_user_name)
+        await message.channel.send(response)
         return
 
     if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_MODERATION_COMMAND_LENGTH):

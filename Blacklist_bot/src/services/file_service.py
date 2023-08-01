@@ -67,6 +67,25 @@ def get_user_data(username_to_check):
         return ""
 
 
+def get_last_user_data():
+    if os.path.exists(conf.PATH_TO_BLOCKED_USERS_FILE):
+        with open(conf.PATH_TO_BLOCKED_USERS_FILE, 'rb') as file:
+            try:  # catch OSError in case of a one line file
+                file.seek(-2, os.SEEK_END)
+                while file.read(1) != b'\n':
+                    file.seek(-2, os.SEEK_CUR)
+            except OSError:
+                logging.warning("File: " + conf.PATH_TO_BLOCKED_USERS_FILE + " has only one line")
+                file.seek(0)
+            return file.readline().decode()
+    else:
+        logging.critical(
+            "Path is invalid or doesn't exist. Path should also contain destination file: path="
+            + conf.PATH_TO_BLOCKED_USERS_FILE + ",method=" + get_user_data.__name__
+        )
+        return ""
+
+
 def update_user_data(who_updated, username, description):
     is_updated = False
     if os.path.exists(conf.PATH_TO_BLOCKED_USERS_FILE):
