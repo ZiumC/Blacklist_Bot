@@ -49,6 +49,13 @@ async def on_message(message):
         await message.channel.send(response_message)
         return
 
+    # checking if message should be ignored
+    if message.content.startswith('$'):
+        logging.warning(
+            "Message is going to be ignore: user=" + author + ",message=" + sStr.safe_string(message.content, author)
+        )
+        return
+
     # checking if command starts with special character
     if not message.content.startswith('!'):
         logging.warning(
@@ -76,13 +83,6 @@ async def on_message(message):
     # handling moderation channel
     elif message.channel.name == conf.MODERATION_CHANNEL_BL:
         try:
-            # checking if message should be ignored
-            if message.content.startswith('$'):
-                logging.warning(
-                    "Message is going to be ignore: user=" + author
-                    + ",message=" + sStr.safe_string(message.content, author)
-                )
-                return
             if messHandler.is_authorized(message, conf.ADMINISTRATIVE_ROLE):
                 logging.info(
                     "Moderation command: user=" + author + ",authorization=SUCCESS, message=" + message.content
