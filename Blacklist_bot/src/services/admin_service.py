@@ -67,18 +67,18 @@ async def process_command(message):
 
     if command == AdminCommands.ADD.value:
         if file_service.get_user_data(username) != "":
-            response = ":warning: Player **" + username + "** already exist in black list. Instead of adding new " \
+            response = ":warning: Player **" + username + "** already exist in blacklist. Instead of adding new " \
                        "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
             await message.channel.send(response)
             return
         description_reason = split_message[2]
         if file_service.add_user_to_bl(author_safe, username, description_reason):
             response = ":green_circle: Player **" + username + \
-                      "** has been added to black list! :heart:"
+                      "** has been added to blacklist! :heart:"
             logging.info("Added to BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(response)
         else:
-            response = ":x: Unable to add **" + username + "** to black list! :broken_heart:"
+            response = ":x: Unable to add **" + username + "** to blacklist! :broken_heart:"
             logging.warning(
                 "Unable to add to BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
@@ -119,11 +119,11 @@ async def process_command(message):
             await message.channel.send(response)
             return
         if file_service.remove_user_from_bl(username):
-            response = ":green_circle: Player **" + username + "** has been removed from black list! :heart:"
+            response = ":green_circle: Player **" + username + "** has been removed from blacklist! :heart:"
             logging.info("Deleted player from BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(response)
         else:
-            response = ":x: Unable to remove **" + username + "** from black list! :broken_heart:"
+            response = ":x: Unable to remove **" + username + "** from blacklist! :broken_heart:"
             logging.warning(
                 "Unable do delete player from BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
