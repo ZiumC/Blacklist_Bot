@@ -7,7 +7,7 @@ from safe_str import SafeStr as sStr
 
 
 def add_user_to_bl(who_added, username_to_bl, description):
-    file = open(conf.PATH_TO_BLOCKED_USERS_FILE, mode="a")
+    file = open(conf.PATH_TO_BLOCKED_USERS_FILE, mode="a", encoding="utf-8")
     if os.path.exists(conf.PATH_TO_BLOCKED_USERS_FILE):
         file.write(prepare_line_to_write(who_added, username_to_bl, description))
         file.close()
@@ -23,9 +23,9 @@ def add_user_to_bl(who_added, username_to_bl, description):
 def remove_user_from_bl(username_to_remove):
     is_removed = False
     if os.path.exists(conf.PATH_TO_BLOCKED_USERS_FILE):
-        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "r") as file:
+        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "r", encoding="utf-8") as file:
             all_lines = file.readlines()
-        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w") as file:
+        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w", encoding="utf-8") as file:
             for line in all_lines:
                 username_from_file = line.split(conf.SEPARATOR)[0]
                 if username_from_file == username_to_remove:
@@ -48,7 +48,7 @@ def remove_user_from_bl(username_to_remove):
 
 def get_user_data(username_to_check):
     if os.path.exists(conf.PATH_TO_BLOCKED_USERS_FILE):
-        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "r") as file:
+        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "r", encoding="utf-8") as file:
             all_lines = file.readlines()
         for line in all_lines:
             username_from_file = line.split(conf.SEPARATOR)[0]
@@ -77,7 +77,7 @@ def get_last_user_data():
             except OSError:
                 logging.warning("File: " + conf.PATH_TO_BLOCKED_USERS_FILE + " has only one line")
                 file.seek(0)
-            return file.readline().decode()
+            return file.readline().decode(encoding="utf-8")
     else:
         logging.critical(
             "Path is invalid or doesn't exist. Path should also contain destination file: path="
@@ -89,9 +89,9 @@ def get_last_user_data():
 def update_user_data(who_updated, username, description):
     is_updated = False
     if os.path.exists(conf.PATH_TO_BLOCKED_USERS_FILE):
-        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "r") as file:
+        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "r", encoding="utf-8") as file:
             all_lines = file.readlines()
-        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w") as file:
+        with open(conf.PATH_TO_BLOCKED_USERS_FILE, "w", encoding="utf-8") as file:
             for line in all_lines:
                 username_from_file = line.split(conf.SEPARATOR)[0]
                 if username_from_file == username:
