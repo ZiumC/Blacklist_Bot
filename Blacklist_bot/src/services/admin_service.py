@@ -46,7 +46,7 @@ async def process_command(message):
         return
     if command == AdminCommands.LAST.value:
         last_user_data = file_service.get_last_user_data()
-        sections_data = last_user_data  .split(",")
+        sections_data = last_user_data  .split(conf.SEPARATOR)
         last_user_name = sections_data[0]
         response = ":orange_circle: Last added player to blacklist is **" + last_user_name + "**.\n\n" \
                    ":information_source: Player has been added by **" + sections_data[3] + "** at **" + sections_data[2] + "**.\n" \
