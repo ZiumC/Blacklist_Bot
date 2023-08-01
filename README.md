@@ -5,7 +5,7 @@
 </p>   
   
 # Blacklist_Bot.py
-Bot for discord servers written in Python that allows to keep players in black list from any game by using specified commands. 
+Bot for discord servers written in Python that allows to keep players in blacklist from any game by using specified commands. 
 
 # Features
 - This project is using ```async``` and ```await``` methods to call Discord API.
@@ -192,6 +192,7 @@ To run that bot on your discord server you should create 2 separate channels. Fi
 - ```!add [username_to_add] -[reason why player is added]``` - adds player with reason to blacklist.
 - ```!modify [username_to_update] -[updated reason why player exist on blacklist]``` - updates player and reason why still exist in blacklist.
 - ```!delete [username_to_delete]``` - removes player from blacklist.
+- ```!last``` - prints last added player to blacklist.
 - ```$Some message``` - bot will ignore message that starts with **$**. This is used to announce some changes or inform other moderative users that bot will be e.g. turned off, updated, etc.,  
     
 # Packages used
