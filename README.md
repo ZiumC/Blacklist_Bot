@@ -1,6 +1,6 @@
 <p align="center">
   <img alt="Static Badge" src="https://img.shields.io/badge/python-3.9_%7C_3.10-blue">
-  <img alt="Static Badge" src="https://img.shields.io/badge/bot_version-1.4-purple">
+  <img alt="Static Badge" src="https://img.shields.io/badge/bot_version-1.5-purple">
   <img alt="GitHub last commit (by committer)" src="https://img.shields.io/github/last-commit/ZiumC/Blacklist_Bot">
 </p>   
   
