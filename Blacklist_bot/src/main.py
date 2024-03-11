@@ -77,6 +77,7 @@ async def on_message(message):
                 "Public command error: user=" + author
                 + ",message=" + sStr.safe_string(message.content, author)
             )
+            print(e)
             logging.exception(e)
             await message.channel.send(conf.EXCEPTION_RESPONSE)
 
@@ -101,6 +102,7 @@ async def on_message(message):
                 "Private command error: user=" + author
                 + ",message=" + sStr.safe_string(message.content, author)
             )
+            print(e)
             logging.exception(e)
             await message.channel.send(conf.EXCEPTION_RESPONSE)
     else:
