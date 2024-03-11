@@ -1,6 +1,7 @@
 import logging
 from enum import Enum
 import config as conf
+from services import armory_service
 from services import file_service
 from safe_str import SafeStr as sStr
 from message_handler import Handler as messHandler
@@ -14,8 +15,8 @@ class PublicCommands(Enum):
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
 
 help_message = ":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" \
-               "1) **" + PublicCommands.HELP.value + "**\n" \
-               "2) **" + PublicCommands.CHECK.value + "** [username]"
+                                                                                          "1) **" + PublicCommands.HELP.value + "**\n" \
+                                                                                                                                "2) **" + PublicCommands.CHECK.value + "** [username]"
 
 
 async def process_command(message, channel_name):
@@ -24,6 +25,9 @@ async def process_command(message, channel_name):
     split_message = safe_string.split(' ')
 
     command = split_message[0]
+    # this is unsafe string!
+    # it is needed due to get original player name
+    original_username = message.content.split(' ')[1]
 
     if command == PublicCommands.HELP.value:
         await message.channel.send(help_message)
@@ -55,13 +59,13 @@ async def process_command(message, channel_name):
                     await message.channel.send(reason_line)
             else:
                 await message.channel.send(reason)
+                armory_service.get_player_info(original_username)
             return
         else:
             logging.info("Searched player not found (this is good)")
             response = ":white_check_mark: Player **not found!**"
             await message.channel.send(response)
             return
-
     else:
         logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
         response_message = ":x: Unable to resolve command **'" + command + "'**.\n\n" + help_message
