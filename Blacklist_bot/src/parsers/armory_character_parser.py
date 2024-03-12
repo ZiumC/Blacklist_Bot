@@ -3,7 +3,6 @@ import utils
 import re
 from typing import Final
 
-
 DIV_CLASS_REGEX: Final[str] = '<div class=\"level-race-class\">.*\\s*.*\\s*.*>$'
 DIV_LEFT_REGEX: Final[str] = '<div class=\"item-left\">((.|\n)*)<div class=\"item-right\">'
 DIV_RIGHT_REGEX: Final[str] = '<div class=\"item-right\">((.|\n)*)<div class=\"item-bottom\">'
@@ -11,39 +10,32 @@ DIV_BOTTOM_REGEX: Final[str] = '<div class=\"item-bottom\">((.|\n)*)<div class=\
 ITEM_DATA_REGEX: Final[str] = '=\"item={1}.*\"'
 
 
-def get_player_info(player_name):
-    url = conf.ARMORY_URL + player_name + conf.ARMORY_SERVER
+def get_player_items(character_name):
+    url = conf.ARMORY_URL + character_name + conf.ARMORY_SERVER
     html_document = utils.get_html_document(url)
 
-    if player_exist(html_document):
+    if __player_exist(html_document):
         print("Player doesn't exits")
         return
 
-    items_data = get_items(html_document, DIV_LEFT_REGEX, ITEM_DATA_REGEX, True)
-    items_data.extend(get_items(html_document, DIV_RIGHT_REGEX, ITEM_DATA_REGEX,False))
-    items_data.extend(get_items(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX,False))
+    items_data = __get_items(html_document, DIV_LEFT_REGEX, ITEM_DATA_REGEX, True)
+    items_data.extend(__get_items(html_document, DIV_RIGHT_REGEX, ITEM_DATA_REGEX, False))
+    items_data.extend(__get_items(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX, False))
 
     for item in items_data:
         item_extract = item.split('&')
         item_id = item_extract[0]
         item_enchant_or_gem = ''
 
-        if len(item_extract) > 0:
+        if len(item_extract) > 1:
             item_enchant_or_gem = item_extract[1]
-        
+
+        print(item_id)
     print("Player exits")
     return
 
 
-def player_exist(html):
-    if conf.ARMORY_NOTFOUND_1 in html:
-        return True
-    if conf.ARMORY_NOTFOUND_2 in html:
-        return True
-    return False
-
-
-def get_items(html_document, pattern_1, pattern_2, is_left):
+def __get_items(html_document, pattern_1, pattern_2, is_left):
     try:
         div_element = re.search(pattern_1, html_document).group(1)
         div_items = re.findall(pattern_2, div_element)
@@ -62,14 +54,12 @@ def get_items(html_document, pattern_1, pattern_2, is_left):
 
         return items
     except AttributeError:
-        return "Unable to find items. Regex: r1="+pattern_1+", r2="+pattern_2
+        return "Unable to find items. Regex: r1=" + pattern_1 + ", r2=" + pattern_2
 
 
-def get_item_id():
-    return
-
-
-def get_item_enchant_id():
-    return
-
-
+def __player_exist(html):
+    if conf.ARMORY_NOTFOUND_1 in html:
+        return True
+    if conf.ARMORY_NOTFOUND_2 in html:
+        return True
+    return False
