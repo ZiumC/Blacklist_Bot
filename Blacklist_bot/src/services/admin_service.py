@@ -3,7 +3,7 @@ import re as regex
 from enum import Enum
 import config as conf
 from services import file_service
-from utils.safe_str import SafeStr as sStr
+from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 
 

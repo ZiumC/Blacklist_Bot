@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Final
-from utils import request
+from utils import request_util as request
 import config as conf
 from models import item_model as im
 import services.file_service as file
