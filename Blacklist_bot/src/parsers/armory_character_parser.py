@@ -31,10 +31,18 @@ def get_player_items(character_name):
         if len(item_extract) > 1:
             item_enchant_or_gem = item_extract[1]
 
-        item_objects.append(item_parser.create_player_item(item_id, item_enchant_or_gem))
-    # item_parser.create_player_item(0, 0)
+        # item_objects.append(item_parser.create_player_item(item_id, item_enchant_or_gem))
+        i = item_parser.create_player_item(item_id, item_enchant_or_gem)
+        print("-------------")
+        print(i.item_id)
+        print(i.name)
+        print(i.item_lvl)
+        print(i.quality)
+        print(i.inventory_type)
+        print(i.required_lvl)
+        print(i.has_sockets)
+        print("-------------")
     return item_objects
-    # return
 
 
 def __get_items(html_document, pattern_1, pattern_2, is_left):

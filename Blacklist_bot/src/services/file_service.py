@@ -121,18 +121,9 @@ def prepare_line_to_write(who_prepared, username, description):
     return username + conf.SEPARATOR + description + conf.SEPARATOR + line_date + conf.SEPARATOR + who_prepared + "\n"
 
 
-def get_raw_item_data(file_path, item_id):
-    is_first_line = True
-    lines_to_return = []
+def read_file_items_db(file_path):
+    db = []
     with open(file_path, 'r') as f_in:
         for line in f_in:
-
-            if is_first_line:
-                lines_to_return.append(line)
-                is_first_line = False
-                pass
-
-            split_line = line.split(',')
-            if split_line[0] == item_id:
-                return line
-    return
+            db.append(line)
+    return db
