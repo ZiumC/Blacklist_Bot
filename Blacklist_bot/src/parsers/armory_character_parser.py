@@ -1,5 +1,6 @@
 import config as conf
-import utils
+from utils import request
+from parsers import item_parser
 import re
 from typing import Final
 
@@ -12,16 +13,16 @@ ITEM_DATA_REGEX: Final[str] = '=\"item={1}.*\"'
 
 def get_player_items(character_name):
     url = conf.ARMORY_URL + character_name + conf.ARMORY_SERVER
-    html_document = utils.get_html_document(url)
+    html_document = request.get_html_document(url)
 
     if __player_exist(html_document):
-        print("Player doesn't exits")
-        return
+        return "Player doesn't exits, given input: " + character_name
 
     items_data = __get_items(html_document, DIV_LEFT_REGEX, ITEM_DATA_REGEX, True)
     items_data.extend(__get_items(html_document, DIV_RIGHT_REGEX, ITEM_DATA_REGEX, False))
     items_data.extend(__get_items(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX, False))
 
+    item_objects = []
     for item in items_data:
         item_extract = item.split('&')
         item_id = item_extract[0]
@@ -30,9 +31,9 @@ def get_player_items(character_name):
         if len(item_extract) > 1:
             item_enchant_or_gem = item_extract[1]
 
-        print(item_id)
-    print("Player exits")
-    return
+        item_objects.append(item_parser.create_item(item_id, item_enchant_or_gem))
+
+    return item_objects
 
 
 def __get_items(html_document, pattern_1, pattern_2, is_left):
