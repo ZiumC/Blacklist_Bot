@@ -1,5 +1,5 @@
 import config as conf
-from utils import request
+from utils import request_util as request
 from parsers import item_parser
 import re
 from typing import Final
