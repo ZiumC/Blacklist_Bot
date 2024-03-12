@@ -1,3 +1,5 @@
+from enum import Enum
+
 import config as conf
 from utils import request_util as request
 from parsers import item_parser
@@ -41,6 +43,8 @@ def get_player_items(character_name):
         print(i.inventory_type)
         print(i.required_lvl)
         print(i.has_sockets)
+        print(i.enchant)
+        print(i.gems)
         print("-------------")
     return item_objects
 
