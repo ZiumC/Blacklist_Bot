@@ -15,8 +15,8 @@ class PublicCommands(Enum):
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
 
 help_message = ":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" \
-                                                                                          "1) **" + PublicCommands.HELP.value + "**\n" \
-                                                                                                                                "2) **" + PublicCommands.CHECK.value + "** [username]"
+                "1) **" + PublicCommands.HELP.value + "**\n" \
+                "2) **" + PublicCommands.CHECK.value + "** [username]"
 
 
 async def process_command(message, channel_name):
