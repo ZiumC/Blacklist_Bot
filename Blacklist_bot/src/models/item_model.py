@@ -10,3 +10,5 @@ class Item:
         self.inventory_type = inventory_type
         self.required_lvl = required_lvl
         self.has_sockets = has_sockets
+        self.enchant = 'None'
+        self.gems = 'None'
