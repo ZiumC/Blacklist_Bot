@@ -3,7 +3,7 @@ import logging
 from datetime import date
 from datetime import datetime
 import config as conf
-from safe_str import SafeStr as sStr
+from utils.safe_str import SafeStr as sStr
 
 
 def add_user_to_bl(who_added, username_to_bl, description):

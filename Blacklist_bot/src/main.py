@@ -5,7 +5,7 @@ import config as conf
 import services.admin_service as adm
 import services.public_command_service as pub
 from message_handler import Handler as messHandler
-from safe_str import SafeStr as sStr
+from src.utils.safe_str import SafeStr as sStr
 
 intent = discord.Intents.default()
 intent.message_content = True
