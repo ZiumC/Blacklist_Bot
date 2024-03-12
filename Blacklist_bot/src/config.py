@@ -25,5 +25,6 @@ ARMORY_URL: Final[str] = "https://armory.warmane.com/character/"
 ARMORY_SERVER: Final[str] = "/Lordaeron/profile"
 ARMORY_NOTFOUND_1: Final[str] = "Page not found"
 ARMORY_NOTFOUND_2: Final[str] = "does not exist"
+ITEM_DATABASE_URL: Final[str] = "https://wotlk.cavernoftime.com/item="
 
 
