@@ -20,6 +20,7 @@ DISCORD_TOKEN: Final[str] = os.getenv('DiscordToken')
 # Set paths to bod data files
 PATH_TO_BLOCKED_USERS_FILE: Final[str] = os.getenv('ListPath')
 PATH_TO_LOG_FILE: Final[str] = os.getenv('LogPath')
+PATH_TO_ITEM_DB_FILE: Final[str] = os.getenv('itemDb')
 
 ARMORY_URL: Final[str] = "https://armory.warmane.com/character/"
 ARMORY_SERVER: Final[str] = "/Lordaeron/profile"

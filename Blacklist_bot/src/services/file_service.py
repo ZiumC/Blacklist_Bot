@@ -1,4 +1,5 @@
 import os
+import csv
 import logging
 from datetime import date
 from datetime import datetime
@@ -118,3 +119,20 @@ def prepare_line_to_write(who_prepared, username, description):
     line_date = datetime.strptime(str(date.today()), "%Y-%m-%d").strftime('%d/%m/%Y')
     who_prepared = sStr.safe_string(who_prepared, who_prepared)
     return username + conf.SEPARATOR + description + conf.SEPARATOR + line_date + conf.SEPARATOR + who_prepared + "\n"
+
+
+def get_raw_item_data(file_path, item_id):
+    is_first_line = True
+    lines_to_return = []
+    with open(file_path, 'r') as f_in:
+        for line in f_in:
+
+            if is_first_line:
+                lines_to_return.append(line)
+                is_first_line = False
+                pass
+
+            split_line = line.split(',')
+            if split_line[0] == item_id:
+                return line
+    return

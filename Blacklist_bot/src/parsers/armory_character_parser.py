@@ -31,9 +31,10 @@ def get_player_items(character_name):
         if len(item_extract) > 1:
             item_enchant_or_gem = item_extract[1]
 
-        item_objects.append(item_parser.create_item(item_id, item_enchant_or_gem))
-
+        item_objects.append(item_parser.create_player_item(item_id, item_enchant_or_gem))
+    # item_parser.create_player_item(0, 0)
     return item_objects
+    # return
 
 
 def __get_items(html_document, pattern_1, pattern_2, is_left):
