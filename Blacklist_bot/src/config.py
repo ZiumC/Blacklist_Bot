@@ -32,5 +32,5 @@ ITEM_DATABASE_URL_1: Final[str] = "https://wotlk.cavernoftime.com/item="
 MISSING_FLAG: Final[str] = 'Missing'
 DEFAULT_ENCHANT_VALUE: Final[str] = 'None'
 DEFAULT_GEMS_VALUE: Final[str] = 'None'
-DEFAULT_NOT_EXIST_VALUE: Final[str] = 'Notfound'
+DEFAULT_NOT_EXIST_VALUE: Final[str] = 'Notfound in db'
 
