@@ -5,6 +5,7 @@ from utils import request_util as request
 from parsers import item_parser
 from models import enchant_model as ench
 from models import item_model as im
+from services import gearscore_service as gs
 import re
 from typing import Final
 
@@ -29,6 +30,7 @@ def get_player_items(character_name):
         items_data.extend(__get_items(html_document, DIV_RIGHT_REGEX, ITEM_DATA_REGEX, False))
         items_data.extend(__get_items(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX, False))
 
+        gs_list = []
         item_objects = []
         for item in items_data:
             item_id = item.split('&')[0]
@@ -59,7 +61,10 @@ def get_player_items(character_name):
                 print(player_item.enchant.quality)
                 print("~~~")
             print(player_item.gems)
+            gs_list.append(gs.get_item_gear_score(player_item))
+            print(gs.get_item_gear_score(player_item))
             print("-------------")
+        print(sum(gs_list))
         return item_objects
     except Exception as e:
         print(e)
