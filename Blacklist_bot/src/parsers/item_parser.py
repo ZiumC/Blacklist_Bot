@@ -55,12 +55,12 @@ def create_player_item(item_id, enchant_data, gems_data):
 
     raw_item_array = raw_item_data.split(conf.SEPARATOR)
 
-    item_name = __get_item_detail(raw_item_array, ItemCategories.ITEM_NAME.value)
-    item_lvl = __get_item_detail(raw_item_array, ItemCategories.ITEM_LEVEL.value)
-    quality = __get_item_detail(raw_item_array, ItemCategories.ITEM_QUALITY.value)
-    inventory_type = __get_item_detail(raw_item_array, ItemCategories.ITEM_INVENTORY_TYPE.value)
-    required_lvl = __get_item_detail(raw_item_array, ItemCategories.ITEM_REQUIRED_LEVEL.value)
-    has_sockets = __get_item_detail(raw_item_array, ItemCategories.ITEM_HAS_SOCKETS.value)
+    item_name = __get_item_property(raw_item_array, ItemCategories.ITEM_NAME.value)
+    item_lvl = __get_item_property(raw_item_array, ItemCategories.ITEM_LEVEL.value)
+    quality = __get_item_property(raw_item_array, ItemCategories.ITEM_QUALITY.value)
+    inventory_type = __get_item_property(raw_item_array, ItemCategories.ITEM_INVENTORY_TYPE.value)
+    required_lvl = __get_item_property(raw_item_array, ItemCategories.ITEM_REQUIRED_LEVEL.value)
+    has_sockets = __get_item_property(raw_item_array, ItemCategories.ITEM_HAS_SOCKETS.value)
 
     player_item = im.Item(item_id, item_name, item_lvl, quality,
                           inventory_type, required_lvl, has_sockets)
@@ -80,23 +80,23 @@ def create_player_item(item_id, enchant_data, gems_data):
     return player_item
 
 
-def __get_item_detail(raw_item_data, category):
+def __get_item_property(raw_item_array, category):
     data_index = item_categories.index(category.lower())
-    return raw_item_data[data_index]
+    return raw_item_array[data_index]
 
 
-def __create_enchant(raw_item_data):
-    if not raw_item_data:
+def __create_enchant(enchant_data_line):
+    if not enchant_data_line:
         return conf.MISSING_FLAG
-    enchant_id = raw_item_data.replace("ench=", '')
+    enchant_id = enchant_data_line.replace("ench=", '')
     item_id = __translate_addition_to_item_id(enchant_id, ItemAdditionType.ENCHANT.value)
     if item_id == -1:
         return conf.DEFAULT_NOT_EXIST_VALUE + " but exist on item"
 
     raw_enchant_array = __get_raw_item_data(item_id).split(conf.SEPARATOR)
-    item_name = __get_item_detail(raw_enchant_array, ItemCategories.ITEM_NAME.value)
-    item_lvl = __get_item_detail(raw_enchant_array, ItemCategories.ITEM_LEVEL.value)
-    quality = __get_item_detail(raw_enchant_array, ItemCategories.ITEM_QUALITY.value)
+    item_name = __get_item_property(raw_enchant_array, ItemCategories.ITEM_NAME.value)
+    item_lvl = __get_item_property(raw_enchant_array, ItemCategories.ITEM_LEVEL.value)
+    quality = __get_item_property(raw_enchant_array, ItemCategories.ITEM_QUALITY.value)
 
     return ench.Enchant(item_id, item_name, item_lvl, quality)
 
