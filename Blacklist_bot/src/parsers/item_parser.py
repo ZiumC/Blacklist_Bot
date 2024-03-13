@@ -103,10 +103,19 @@ def __create_enchant(enchant_data_line):
     return ench.Enchant(item_id, item_name, item_lvl, quality)
 
 
-def __create_gems(raw_item_data):
-    if not raw_item_data:
+# At the moment I don't have db file: gemID -> itemID
+# This is the reason why it is like this
+def __create_gems(gems_data_line):
+    if not gems_data_line:
         return conf.MISSING_FLAG
-    return raw_item_data
+    gems_array = gems_data_line.replace('gems=', '').split(':')
+
+    gem_counter = 0
+    for gem in gems_array:
+        if gem != str('0'):
+            gem_counter = +1
+
+    return gem_counter
 
 
 def __translate_addition_to_item_id(enchant_id, item_addition_type):
