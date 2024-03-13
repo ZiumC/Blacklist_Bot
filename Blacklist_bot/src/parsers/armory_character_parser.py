@@ -52,11 +52,12 @@ def get_player_items(character_name):
             if not isinstance(player_item.enchant, ench.Enchant):
                 print(player_item.enchant)
             else:
-                print("enchant:")
+                print("~~enchant:")
                 print(player_item.enchant.item_id)
                 print(player_item.enchant.name)
                 print(player_item.enchant.item_lvl)
                 print(player_item.enchant.quality)
+                print("~~~")
             print(player_item.gems)
             print("-------------")
         return item_objects
