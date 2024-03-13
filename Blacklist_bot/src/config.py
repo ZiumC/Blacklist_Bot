@@ -28,4 +28,7 @@ ARMORY_NOTFOUND_1: Final[str] = "Page not found"
 ARMORY_NOTFOUND_2: Final[str] = "does not exist"
 ITEM_DATABASE_URL_1: Final[str] = "https://wotlk.cavernoftime.com/item="
 
+MISSING_FLAG: Final[str] = 'Missing'
+DEFAULT_ENCHANT_VALUE: Final[str] = 'None'
+DEFAULT_GEMS_VALUE: Final[str] = 'None'
 

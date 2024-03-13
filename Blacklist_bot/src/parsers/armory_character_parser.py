@@ -11,6 +11,8 @@ DIV_LEFT_REGEX: Final[str] = '<div class=\"item-left\">((.|\n)*)<div class=\"ite
 DIV_RIGHT_REGEX: Final[str] = '<div class=\"item-right\">((.|\n)*)<div class=\"item-bottom\">'
 DIV_BOTTOM_REGEX: Final[str] = '<div class=\"item-bottom\">((.|\n)*)<div class=\"model\">'
 ITEM_DATA_REGEX: Final[str] = '=\"item={1}.*\"'
+ENCHANT_REGEX: Final[str] = 'ench=\\d*'
+GEMS_REGEX: Final[str] = 'gems=.*'
 
 
 def get_player_items(character_name):
@@ -26,15 +28,12 @@ def get_player_items(character_name):
 
     item_objects = []
     for item in items_data:
-        item_extract = item.split('&')
-        item_id = item_extract[0]
-        item_enchant_or_gem = ''
-
-        if len(item_extract) > 1:
-            item_enchant_or_gem = item_extract[1]
+        item_id = item.split('&')[0]
+        item_enchant = __get_additions_item_(item, ENCHANT_REGEX)
+        item_gems = __get_additions_item_(item, GEMS_REGEX)
 
         # item_objects.append(item_parser.create_player_item(item_id, item_enchant_or_gem))
-        i = item_parser.create_player_item(item_id, item_enchant_or_gem)
+        i = item_parser.create_player_item(item_id, item_enchant, item_gems)
         print("-------------")
         print(i.item_id)
         print(i.name)
@@ -69,6 +68,11 @@ def __get_items(html_document, pattern_1, pattern_2, is_left):
         return items
     except AttributeError:
         return "Unable to find items. Regex: r1=" + pattern_1 + ", r2=" + pattern_2
+
+
+def __get_additions_item_(item_data, regex):
+    pattern = re.compile(regex)
+    return pattern.findall(item_data)
 
 
 def __player_exist(html):

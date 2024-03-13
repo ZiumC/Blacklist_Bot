@@ -1,3 +1,6 @@
+import config as conf
+
+
 class Item:
     def __init__(
             self, item_id, name, item_lvl, quality,
@@ -10,5 +13,5 @@ class Item:
         self.inventory_type = inventory_type
         self.required_lvl = required_lvl
         self.has_sockets = has_sockets
-        self.enchant = 'None'
-        self.gems = 'None'
+        self.enchant = conf.DEFAULT_ENCHANT_VALUE
+        self.gems = conf.DEFAULT_GEMS_VALUE
