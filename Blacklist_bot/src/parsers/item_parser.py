@@ -5,9 +5,6 @@ import config as conf
 from models import item_model as im
 import services.file_service as file
 
-item_db = file.read_file_items_db(conf.PATH_TO_ITEM_DB_FILE)
-item_categories = [category.lower() for category in item_db[0].split(conf.SEPARATOR)]
-
 
 class ItemCategories(Enum):
     ITEM_ID = "ItemID"
@@ -35,7 +32,16 @@ class EnchantedItems(Enum):
     RANGED = 'Ranged Right'
 
 
-def create_player_item(item_id, enchant_raw_line, gem_raw_line):
+item_db = file.read_file_items_db(conf.PATH_TO_ITEM_DB_FILE)
+item_categories = [category.lower() for category in item_db[0].split(conf.SEPARATOR)]
+enchanted_items = [EnchantedItems.HEAD.value, EnchantedItems.SHOULDER.value, EnchantedItems.CLOAK.value,
+                   EnchantedItems.CHEST.value, EnchantedItems.WRIST.value, EnchantedItems.HANDS.value,
+                   EnchantedItems.LEGS.value, EnchantedItems.FEET.value, EnchantedItems.ONE_HAND.value,
+                   EnchantedItems.TWO_HAND.value, EnchantedItems.MAIN_HAND.value, EnchantedItems.SHIELD.value,
+                   EnchantedItems.RANGED.value]
+
+
+def create_player_item(item_id, enchant_data, gems_data):
     raw_item_data = __get_raw_item_data(item_id)
     if raw_item_data is None:
         return "Unable to find item data by id: " + item_id
@@ -52,37 +58,17 @@ def create_player_item(item_id, enchant_raw_line, gem_raw_line):
     player_item = im.Item(item_id, item_name, item_lvl, quality,
                           inventory_type, required_lvl, has_sockets)
 
-    if inventory_type == EnchantedItems.HEAD.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.SHOULDER.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.CLOAK.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.CHEST.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.WRIST.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.HANDS.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.LEGS.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.FEET.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.ONE_HAND.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.TWO_HAND.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.MAIN_HAND.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.SHIELD.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
-    elif inventory_type == EnchantedItems.RANGED.value:
-        setattr(player_item, 'enchant', enchant_raw_line)
+    if inventory_type in enchanted_items:
+        enchant = __create_enchant(enchant_data)
+        setattr(player_item, 'enchant', enchant)
     else:
-        setattr(player_item, 'enchant', "Not for item")
+        setattr(player_item, 'enchant', conf.DEFAULT_ENCHANT_VALUE)
 
     if has_sockets == str(1):
-        setattr(player_item, 'gems', gem_raw_line)
+        gems = __create_gems(gems_data)
+        setattr(player_item, 'gems', gems)
+    else:
+        setattr(player_item, 'gems', conf.DEFAULT_GEMS_VALUE)
 
     return player_item
 
@@ -93,11 +79,15 @@ def __get_item_detail(raw_item_data, category):
 
 
 def __create_enchant(raw_item_data):
-    return
+    if not raw_item_data:
+        return conf.MISSING_FLAG
+    return raw_item_data
 
 
-def __create_gem(raw_item_data):
-    return
+def __create_gems(raw_item_data):
+    if not raw_item_data:
+        return conf.MISSING_FLAG
+    return raw_item_data
 
 
 def __get_raw_item_data(item_id):
