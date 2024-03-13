@@ -1,6 +1,7 @@
 """source code found at:
-# https://github.com/Rdyx/warmane-armory-bot/blob/master/src/gearScore.py
-# Very thank you author for that!  """
+    # https://github.com/Rdyx/warmane-armory-bot/blob/master/src/gearScore.py
+    # Very thank you author for that!
+"""
 
 
 def get_item_gear_score(player_item):
@@ -8,8 +9,13 @@ def get_item_gear_score(player_item):
     item_level = player_item.item_lvl
     item_quality = player_item.quality
 
-    # if item_type == 'None' and int(item_level) < 200:
-    #     return 0
+    # Need to include also Shields. They are just Off-Hands
+    # Items like: Librams, Idols, Sigls etc. in itemDb they have None type
+    if item_type == 'Shield':
+        item_type = 'Off-Hand'
+    elif item_type == 'None' and item_quality == str(0):
+        item_type = 'Relic'
+        item_quality = '4'
 
     if item_type in ['Shirt', 'Tabard']:
         return 0
@@ -33,22 +39,22 @@ def __create_gear_score():
     item_levels = [200, 213, 219, 226, 232, 239, 245, 251, 258, 264, 271, 272, 277, 284]
     item_slots = [
         'Head', 'Chest', 'Robe', 'Legs', 'Main Hand',
-        'One-hand', 'Off-Hand', 'Held In Off-Hand', 'Shoulder',
+        'One-Hand', 'Off-Hand', 'Held In Off-hand', 'Shoulder',
         'Hands', 'Waist', 'Feet', 'Neck',
         'Cloak', 'Wrist', 'Finger', 'Trinket',
-        'Ranged', 'Relic', 'Thrown', 'Two-hand', 'None'
+        'Ranged', 'Relic', 'Thrown', 'Two-hand'
     ]
 
     highest_gs_slots_names = [
         'Head', 'Chest', 'Robe', 'Legs',
-        'Main Hand', 'One-hand', 'Off-Hand', 'Held In Off-Hand'
+        'Main Hand', 'One-Hand', 'Off-Hand', 'Held In Off-hand'
     ]
-    highest_gs_slots_values = [271, 310, 348, 365, 385, 402, 422, 439, 457, 477, 494, 514, 0, 531, 551]
+    highest_gs_slots_values = [271, 310, 348, 365, 385, 402, 422, 439, 457, 477, 494, 514, 523, 531, 551]
 
     second_highest_gs_slots_names = ['Shoulder', 'Hands', 'Waist', 'Feet']
     second_highest_gs_slots_values = [
         203, 233, 261, 274, 289,
-        301, 316, 329, 342, 357, 370, 385, 0, 398, 413
+        301, 316, 329, 342, 357, 370, 385, 391, 398, 413
     ]
 
     middle_gs_slots_names = ['Neck', 'Cloak', 'Wrist', 'Finger', 'Trinket']
@@ -57,13 +63,13 @@ def __create_gear_score():
         237, 247, 257, 268, 278, 289, 290, 298, 310
     ]
 
-    ranged_gs_slot_names = ['Ranged', 'Relic', 'Thrown', 'None']
-    ranged_gs_slot_values = [86, 98, 110, 115, 121, 127, 133, 139, 144, 150, 156, 162, 0, 168, 174]
+    ranged_gs_slot_names = ['Ranged', 'Relic', 'Thrown']
+    ranged_gs_slot_values = [86, 98, 110, 115, 121, 127, 133, 139, 144, 150, 156, 162, 165, 168, 174]
 
     two_hand_gs_slot_name = ['Two-hand']
     two_hand_gs_slot_values = [
         543, 621, 696, 730, 770, 805,
-        845, 879, 914, 954, 988, 1028, 0, 1062, 1103
+        845, 879, 914, 954, 988, 1028, 1045, 1062, 1103
     ]
 
     # Those items are sharing ilvl with epics equivalent but have
@@ -94,34 +100,34 @@ def __create_gear_score():
             item_lvl = str(item_lvl)
             dictionary[item_slot][item_lvl] = {}
 
-            for itemRarity in item_rarities:
+            for item_rarity in item_rarities:
                 # Legendary item, special values, break loop after data is used
-                for legendaryGsItemsName in legendary_gs_items_names:
+                for legendary_gs_item_name in legendary_gs_items_names:
                     # Break statement earlier to avoid useless process
-                    if itemRarity != '5':
+                    if item_rarity != '5':
                         break
-                    if itemRarity == '5':
+                    if item_rarity == '5':
                         if (
                                 item_slot == 'Main Hand' and
                                 item_lvl == '245' and
-                                legendaryGsItemsName == legendary_gs_items_names[0]
+                                legendary_gs_item_name == legendary_gs_items_names[0]
                         ):
-                            dictionary[item_slot][item_lvl][itemRarity] = legendary_gs_items_values[0]
+                            dictionary[item_slot][item_lvl][item_rarity] = legendary_gs_items_values[0]
                             break
                         if (
                                 item_slot == 'Two-hand' and
                                 item_lvl == '284' and
-                                legendaryGsItemsName == legendary_gs_items_names[1]
+                                legendary_gs_item_name == legendary_gs_items_names[1]
                         ):
-                            dictionary[item_slot][item_lvl][itemRarity] = legendary_gs_items_values[1]
+                            dictionary[item_slot][item_lvl][item_rarity] = legendary_gs_items_values[1]
                             break
 
                 # Using .pop() to get the first value and reduce array length
                 # each time we loop over item_lvl
                 # We ignore rarity 5 because we already used a loop over it before
-                if item_lvl == '200' and itemRarity in ['3', '4']:
-                    dictionary[item_slot][item_lvl][itemRarity] = gs_values_copy.pop(0)
-                elif itemRarity == '4':
-                    dictionary[item_slot][item_lvl][itemRarity] = gs_values_copy.pop(0)
+                if item_lvl == '200' and item_rarity in ['3', '4']:
+                    dictionary[item_slot][item_lvl][item_rarity] = gs_values_copy.pop(0)
+                elif item_rarity == '4':
+                    dictionary[item_slot][item_lvl][item_rarity] = gs_values_copy.pop(0)
 
     return dictionary
