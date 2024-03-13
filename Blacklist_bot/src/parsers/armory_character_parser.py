@@ -4,6 +4,7 @@ import config as conf
 from utils import request_util as request
 from parsers import item_parser
 from models import enchant_model as ench
+from models import item_model as im
 import re
 from typing import Final
 
@@ -34,24 +35,28 @@ def get_player_items(character_name):
         item_gems = __get_additions_item_(item, GEMS_REGEX)
 
         # item_objects.append(item_parser.create_player_item(item_id, item_enchant_or_gem))
-        i = item_parser.create_player_item(item_id, item_enchant, item_gems)
+        player_item = item_parser.create_player_item(item_id, item_enchant, item_gems)
+
+        if not isinstance(player_item, im.Item):
+            return player_item
+
         print("-------------")
-        print(i.item_id)
-        print(i.name)
-        print(i.item_lvl)
-        print(i.quality)
-        print(i.inventory_type)
-        print(i.required_lvl)
-        print(i.has_sockets)
-        if isinstance(i.enchant, ench.Enchant):
-            print("enchant:")
-            print(i.enchant.item_id)
-            print(i.enchant.name)
-            print(i.enchant.item_lvl)
-            print(i.enchant.quality)
+        print(player_item.item_id)
+        print(player_item.name)
+        print(player_item.item_lvl)
+        print(player_item.quality)
+        print(player_item.inventory_type)
+        print(player_item.required_lvl)
+        print(player_item.has_sockets)
+        if not isinstance(player_item.enchant, ench.Enchant):
+            print(player_item.enchant)
         else:
-            print(i.enchant)
-        print(i.gems)
+            print("enchant:")
+            print(player_item.enchant.item_id)
+            print(player_item.enchant.name)
+            print(player_item.enchant.item_lvl)
+            print(player_item.enchant.quality)
+        print(player_item.gems)
         print("-------------")
     return item_objects
 
