@@ -21,6 +21,7 @@ DISCORD_TOKEN: Final[str] = os.getenv('DiscordToken')
 PATH_TO_BLOCKED_USERS_FILE: Final[str] = os.getenv('ListPath')
 PATH_TO_LOG_FILE: Final[str] = os.getenv('LogPath')
 PATH_TO_ITEM_DB_FILE: Final[str] = os.getenv('itemDb')
+PATH_TO_ENCHANT_TRANSLATION_FILE: Final[str] = os.getenv('enchantDb')
 
 ARMORY_URL: Final[str] = "https://armory.warmane.com/character/"
 ARMORY_SERVER: Final[str] = "/Lordaeron/profile"
@@ -31,4 +32,5 @@ ITEM_DATABASE_URL_1: Final[str] = "https://wotlk.cavernoftime.com/item="
 MISSING_FLAG: Final[str] = 'Missing'
 DEFAULT_ENCHANT_VALUE: Final[str] = 'None'
 DEFAULT_GEMS_VALUE: Final[str] = 'None'
+DEFAULT_NOT_EXIST_VALUE: Final[str] = 'Notfound'
 

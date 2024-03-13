@@ -3,7 +3,13 @@ from typing import Final
 from utils import request_util as request
 import config as conf
 from models import item_model as im
+from models import enchant_model as ench
 import services.file_service as file
+
+
+class ItemAdditionType(Enum):
+    GEM = "Gem"
+    ENCHANT = "Enchant"
 
 
 class ItemCategories(Enum):
@@ -32,7 +38,8 @@ class EnchantedItems(Enum):
     RANGED = 'Ranged Right'
 
 
-item_db = file.read_file_items_db(conf.PATH_TO_ITEM_DB_FILE)
+item_db = file.read_file_db(conf.PATH_TO_ITEM_DB_FILE)
+enchant_id_item_id_db = file.read_file_db(conf.PATH_TO_ENCHANT_TRANSLATION_FILE)
 item_categories = [category.lower() for category in item_db[0].split(conf.SEPARATOR)]
 enchanted_items = [EnchantedItems.HEAD.value, EnchantedItems.SHOULDER.value, EnchantedItems.CLOAK.value,
                    EnchantedItems.CHEST.value, EnchantedItems.WRIST.value, EnchantedItems.HANDS.value,
@@ -44,7 +51,7 @@ enchanted_items = [EnchantedItems.HEAD.value, EnchantedItems.SHOULDER.value, Enc
 def create_player_item(item_id, enchant_data, gems_data):
     raw_item_data = __get_raw_item_data(item_id)
     if raw_item_data is None:
-        return "Unable to find item data by id: " + item_id
+        return conf.DEFAULT_NOT_EXIST_VALUE
 
     raw_item_array = raw_item_data.split(conf.SEPARATOR)
 
@@ -81,7 +88,17 @@ def __get_item_detail(raw_item_data, category):
 def __create_enchant(raw_item_data):
     if not raw_item_data:
         return conf.MISSING_FLAG
-    return raw_item_data
+    enchant_id = raw_item_data.replace("ench=", '')
+    item_id = __translate_addition_to_item_id(enchant_id, ItemAdditionType.ENCHANT.value)
+    if item_id == -1:
+        return "Enchant exist but notfound in itemDb"
+
+    raw_enchant_array = __get_raw_item_data(item_id).split(conf.SEPARATOR)
+    item_name = __get_item_detail(raw_enchant_array, ItemCategories.ITEM_NAME.value)
+    item_lvl = __get_item_detail(raw_enchant_array, ItemCategories.ITEM_LEVEL.value)
+    quality = __get_item_detail(raw_enchant_array, ItemCategories.ITEM_QUALITY.value)
+
+    return ench.Enchant(item_id, item_name, item_lvl, quality)
 
 
 def __create_gems(raw_item_data):
@@ -90,8 +107,17 @@ def __create_gems(raw_item_data):
     return raw_item_data
 
 
-def __get_raw_item_data(item_id):
-    for line in item_db:
-        item_id_db = line.split(conf.SEPARATOR)[0]
-        if item_id == item_id_db:
+def __translate_addition_to_item_id(enchant_id, item_addition_type):
+    if item_addition_type == ItemAdditionType.ENCHANT.value:
+        item_raw_data = __get_raw_item_data(enchant_id, db=enchant_id_item_id_db, search_by_index=1, separator='\t')
+        if not item_raw_data:
+            return -1
+        return item_raw_data.split('\t')[0]
+    return "Addition type is not supported"
+
+
+def __get_raw_item_data(item_id, db=item_db, search_by_index=0, separator=conf.SEPARATOR):
+    for line in db:
+        item_id_db = line.split(separator)[search_by_index]
+        if item_id in item_id_db:
             return line

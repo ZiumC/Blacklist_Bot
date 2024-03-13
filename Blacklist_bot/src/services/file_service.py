@@ -121,7 +121,7 @@ def prepare_line_to_write(who_prepared, username, description):
     return username + conf.SEPARATOR + description + conf.SEPARATOR + line_date + conf.SEPARATOR + who_prepared + "\n"
 
 
-def read_file_items_db(file_path):
+def read_file_db(file_path):
     db = []
     with open(file_path, 'r') as f_in:
         for line in f_in:

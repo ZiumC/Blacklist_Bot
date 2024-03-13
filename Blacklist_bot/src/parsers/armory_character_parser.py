@@ -3,6 +3,7 @@ from enum import Enum
 import config as conf
 from utils import request_util as request
 from parsers import item_parser
+from models import enchant_model as ench
 import re
 from typing import Final
 
@@ -42,7 +43,14 @@ def get_player_items(character_name):
         print(i.inventory_type)
         print(i.required_lvl)
         print(i.has_sockets)
-        print(i.enchant)
+        if isinstance(i.enchant, ench.Enchant):
+            print("enchant:")
+            print(i.enchant.item_id)
+            print(i.enchant.name)
+            print(i.enchant.item_lvl)
+            print(i.enchant.quality)
+        else:
+            print(i.enchant)
         print(i.gems)
         print("-------------")
     return item_objects
@@ -72,7 +80,10 @@ def __get_items(html_document, pattern_1, pattern_2, is_left):
 
 def __get_additions_item_(item_data, regex):
     pattern = re.compile(regex)
-    return pattern.findall(item_data)
+    all_elements = pattern.findall(item_data)
+    if len(all_elements) == 1:
+        return all_elements[0]
+    return
 
 
 def __player_exist(html):
