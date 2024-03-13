@@ -78,12 +78,15 @@ def __get_items(html_document, pattern_1, pattern_2, is_left):
         return "Unable to find items. Regex: r1=" + pattern_1 + ", r2=" + pattern_2
 
 
-def __get_additions_item_(item_data, regex):
-    pattern = re.compile(regex)
-    all_elements = pattern.findall(item_data)
-    if len(all_elements) == 1:
-        return all_elements[0]
-    return
+def __get_additions_item_(item_data, pattern_1):
+    try:
+        pattern = re.compile(pattern_1)
+        all_elements = pattern.findall(item_data)
+        if len(all_elements) == 1:
+            return all_elements[0]
+        return
+    except AttributeError:
+        return "Unable to find item. Regex: r1=" + pattern_1
 
 
 def __player_exist(html):
