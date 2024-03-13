@@ -38,8 +38,8 @@ class EnchantedItems(Enum):
     RANGED = 'Ranged Right'
 
 
-item_db = file.read_file_db(conf.PATH_TO_ITEM_DB_FILE)
-enchant_id_item_id_db = file.read_file_db(conf.PATH_TO_ENCHANT_TRANSLATION_FILE)
+item_db = file.read_db_file(conf.PATH_TO_ITEM_DB_FILE)
+enchant_id_item_id_db = file.read_db_file(conf.PATH_TO_ENCHANT_TRANSLATION_FILE)
 item_categories = [category.lower() for category in item_db[0].split(conf.SEPARATOR)]
 enchanted_items = [EnchantedItems.HEAD.value, EnchantedItems.SHOULDER.value, EnchantedItems.CLOAK.value,
                    EnchantedItems.CHEST.value, EnchantedItems.WRIST.value, EnchantedItems.HANDS.value,
@@ -88,8 +88,10 @@ def __get_item_property(raw_item_array, category):
 def __create_enchant(enchant_data_line):
     if not enchant_data_line:
         return conf.MISSING_FLAG
+
     enchant_id = enchant_data_line.replace("ench=", '')
     item_id = __translate_addition_to_item_id(enchant_id, ItemAdditionType.ENCHANT.value)
+
     if item_id == -1:
         return conf.DEFAULT_NOT_EXIST_VALUE + " but exist on item"
 
