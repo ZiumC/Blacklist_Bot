@@ -59,7 +59,7 @@ async def process_command(message, channel_name):
                     await message.channel.send(reason_line)
             else:
                 await message.channel.send(reason)
-                messages_to_send = armoryF.get_messages_of(original_username)
+                messages_to_send = armoryF.get_messages_of(armoryF, original_username)
                 await message.channel.send(messages_to_send)
             return
         else:
