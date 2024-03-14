@@ -19,11 +19,17 @@ class SpecialCharacters(Enum):
 
 class ArmoryFormatter:
 
-    def get_messages_of(self, username):
+    @staticmethod
+    def get_messages_of(username):
         character_info, guild_name, guild_link, player_items, player_gs = \
             armory_parser.character_armory(username)
+
+        if str(80) not in character_info:
+            return ''
+
         player_url = conf.ARMORY_URL + username + conf.ARMORY_SERVER
 
+        response = []
         response_details \
             = ('\n' + SpecialCharacters.WHEEL_CHAIR.value + ' Summary for: [' + username + '](<' +
                player_url + '>)\n> **Character**: ' + character_info)
@@ -41,8 +47,23 @@ class ArmoryFormatter:
             response_details = response_details + '> **GearScore**: ' + str(int(player_gs)) + '\n'
         response_details = response_details + '> **Gear**:\n'
 
+        items_left = ArmoryFormatter.__get_item_output(0, 6, player_items)
+        response_details = response_details + items_left
+
+        response.append(response_details)
+
+        items_right = ArmoryFormatter.__get_item_output(7, 14, player_items)
+        items_bottom = ArmoryFormatter.__get_item_output(15, len(player_items), player_items)
+
+        response.append(items_right)
+        response.append(items_bottom)
+
+        return response
+
+    @staticmethod
+    def __get_item_output(start_index, end_index, player_items):
         item_data = ''
-        for i in range(0, 6):
+        for i in range(start_index, end_index):
             item_data = item_data + '>' + SpecialCharacters.LONG_SPACE.value
             item = player_items[i]
 
@@ -73,7 +94,4 @@ class ArmoryFormatter:
                 item_data = item
 
             item_data = item_data + enchant_data + gem_data
-        response_details = response_details + item_data
-
-        return response_details
-    
+        return item_data
