@@ -36,7 +36,8 @@ class EnchantedItems(Enum):
     TWO_HAND = 'Two-Hand'
     MAIN_HAND = 'Main Hand'
     SHIELD = 'Shield'
-    RANGED = 'Ranged Right'
+    RANGED_RIGHT = 'Ranged Right'
+    RANGED = 'Ranged'
 
 
 class NonEnchantedWeapons(Enum):
@@ -51,7 +52,7 @@ enchanted_items = [EnchantedItems.HEAD.value, EnchantedItems.SHOULDER.value, Enc
                    EnchantedItems.CHEST.value, EnchantedItems.WRIST.value, EnchantedItems.HANDS.value,
                    EnchantedItems.LEGS.value, EnchantedItems.FEET.value, EnchantedItems.ONE_HAND.value,
                    EnchantedItems.TWO_HAND.value, EnchantedItems.MAIN_HAND.value, EnchantedItems.SHIELD.value,
-                   EnchantedItems.RANGED.value]
+                   EnchantedItems.RANGED_RIGHT.value, EnchantedItems.RANGED.value]
 non_enchanted_weapons = [NonEnchantedWeapons.WAND.value, NonEnchantedWeapons.THROWN.value]
 
 
