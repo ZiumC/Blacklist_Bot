@@ -60,6 +60,7 @@ async def process_command(message, channel_name):
             else:
                 await message.channel.send(reason)
                 messages_to_send = armoryF.get_messages_of(original_username)
+                await message.channel.send(messages_to_send)
             return
         else:
             logging.info("Searched player not found (this is good)")

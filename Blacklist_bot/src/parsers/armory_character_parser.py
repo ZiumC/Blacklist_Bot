@@ -86,6 +86,8 @@ def __get_player_items(html_document):
     As an result calculated GS were 7022 but real value in game is 6034.
     This method horrible but required to cover most class cases that can equip 2xTwo-Handed or 2xOne-Handed weapons.
 """
+
+
 def __calculate_player_gs(items_type, items_gs):
     if len(items_type) != len(items_gs):
         return -1
@@ -98,9 +100,14 @@ def __calculate_player_gs(items_type, items_gs):
 
     weapon_indexes = [i for i, item in enumerate(items_type) if item == 'One-Hand' or item == 'Two-Hand']
     duplicated_weapon_avg_gs = 0
-    for i in range(0, len(weapon_indexes)):
-        avg_gs = duplicated_weapon_avg_gs + items_gs[weapon_indexes[i]]
-    return gs_sum + (duplicated_weapon_avg_gs / 2)
+
+    if len(weapon_indexes) == 1:
+        gs_sum = gs_sum + items_gs[weapon_indexes[0]]
+    else:
+        for i in range(0, len(weapon_indexes)):
+            duplicated_weapon_avg_gs = duplicated_weapon_avg_gs + items_gs[weapon_indexes[i]]
+        duplicated_weapon_avg_gs = (duplicated_weapon_avg_gs / 2)
+    return gs_sum + duplicated_weapon_avg_gs
 
 
 def __player_exist(html):
