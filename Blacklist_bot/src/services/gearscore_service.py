@@ -16,6 +16,8 @@ def get_item_gear_score(player_item):
     elif item_type == 'None' and item_quality == str(0):
         item_type = 'Relic'
         item_quality = '4'
+    elif item_quality == str(0):
+        item_quality = '4'
 
     if item_type in ['Shirt', 'Tabard']:
         return 0
@@ -42,7 +44,7 @@ def __create_gear_score():
         'One-Hand', 'Off-Hand', 'Held In Off-hand', 'Shoulder',
         'Hands', 'Waist', 'Feet', 'Neck',
         'Cloak', 'Wrist', 'Finger', 'Trinket',
-        'Ranged', 'Relic', 'Thrown', 'Two-hand'
+        'Ranged', 'Relic', 'Thrown', 'Two-Hand', 'Ranged Right'
     ]
 
     highest_gs_slots_names = [
@@ -63,10 +65,10 @@ def __create_gear_score():
         237, 247, 257, 268, 278, 289, 290, 298, 310
     ]
 
-    ranged_gs_slot_names = ['Ranged', 'Relic', 'Thrown']
+    ranged_gs_slot_names = ['Ranged', 'Relic', 'Thrown', 'Ranged Right']
     ranged_gs_slot_values = [86, 98, 110, 115, 121, 127, 133, 139, 144, 150, 156, 162, 165, 168, 174]
 
-    two_hand_gs_slot_name = ['Two-hand']
+    two_hand_gs_slot_name = ['Two-Hand']
     two_hand_gs_slot_values = [
         543, 621, 696, 730, 770, 805,
         845, 879, 914, 954, 988, 1028, 1045, 1062, 1103

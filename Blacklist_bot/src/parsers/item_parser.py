@@ -1,6 +1,4 @@
 from enum import Enum
-from typing import Final
-from utils import request_util as request
 import config as conf
 from models import item_model as im
 from models import enchant_model as ench
@@ -18,6 +16,7 @@ class ItemCategories(Enum):
     ITEM_LEVEL = "itemLevel"
     ITEM_QUALITY = "quality"
     ITEM_INVENTORY_TYPE = "inventoryType"
+    ITEM_TYPE = "itemType"
     ITEM_REQUIRED_LEVEL = "requiredLevel"
     ITEM_HAS_SOCKETS = "hasSockets"
 
@@ -35,7 +34,13 @@ class EnchantedItems(Enum):
     TWO_HAND = 'Two-Hand'
     MAIN_HAND = 'Main Hand'
     SHIELD = 'Shield'
-    RANGED = 'Ranged Right'
+    RANGED_RIGHT = 'Ranged Right'
+    RANGED = 'Ranged'
+
+
+class NonEnchantedWeapons(Enum):
+    WAND = 'Wand'
+    THROWN = 'Thrown'
 
 
 item_db = file.read_db_file(conf.PATH_TO_ITEM_DB_FILE)
@@ -45,7 +50,8 @@ enchanted_items = [EnchantedItems.HEAD.value, EnchantedItems.SHOULDER.value, Enc
                    EnchantedItems.CHEST.value, EnchantedItems.WRIST.value, EnchantedItems.HANDS.value,
                    EnchantedItems.LEGS.value, EnchantedItems.FEET.value, EnchantedItems.ONE_HAND.value,
                    EnchantedItems.TWO_HAND.value, EnchantedItems.MAIN_HAND.value, EnchantedItems.SHIELD.value,
-                   EnchantedItems.RANGED.value]
+                   EnchantedItems.RANGED_RIGHT.value, EnchantedItems.RANGED.value]
+non_enchanted_weapons = [NonEnchantedWeapons.WAND.value, NonEnchantedWeapons.THROWN.value]
 
 
 def create_player_item(item_id, enchant_data, gems_data):
@@ -59,13 +65,16 @@ def create_player_item(item_id, enchant_data, gems_data):
     item_lvl = __get_item_property(raw_item_array, ItemCategories.ITEM_LEVEL.value)
     quality = __get_item_property(raw_item_array, ItemCategories.ITEM_QUALITY.value)
     inventory_type = __get_item_property(raw_item_array, ItemCategories.ITEM_INVENTORY_TYPE.value)
+    item_type = __get_item_property(raw_item_array, ItemCategories.ITEM_TYPE.value)
     required_lvl = __get_item_property(raw_item_array, ItemCategories.ITEM_REQUIRED_LEVEL.value)
     has_sockets = __get_item_property(raw_item_array, ItemCategories.ITEM_HAS_SOCKETS.value)
 
     player_item = im.Item(item_id, item_name, item_lvl, quality,
-                          inventory_type, required_lvl, has_sockets)
+                          inventory_type, item_type, required_lvl, has_sockets)
 
-    if inventory_type in enchanted_items:
+    if item_type in non_enchanted_weapons:
+        pass
+    elif inventory_type in enchanted_items:
         enchant = __create_enchant(enchant_data)
         setattr(player_item, 'enchant', enchant)
     else:
@@ -112,8 +121,8 @@ def __create_gems(gems_data_line):
 
     gem_counter = 0
     for gem in gems_array:
-        if gem != str('0'):
-            gem_counter = +1
+        if str('0') not in gem:
+            gem_counter = gem_counter + 1
 
     return gem_counter
 

@@ -1,8 +1,8 @@
 import logging
 from enum import Enum
 import config as conf
-from parsers import armory_character_parser as armory_parser
 from services import file_service
+from services.message_formatter_service import ArmoryFormatter as armoryF
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 
@@ -15,8 +15,8 @@ class PublicCommands(Enum):
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
 
 help_message = ":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" \
-                "1) **" + PublicCommands.HELP.value + "**\n" \
-                "2) **" + PublicCommands.CHECK.value + "** [username]"
+                                                                                          "1) **" + PublicCommands.HELP.value + "**\n" \
+                                                                                                                                "2) **" + PublicCommands.CHECK.value + "** [username]"
 
 
 async def process_command(message, channel_name):
@@ -59,12 +59,16 @@ async def process_command(message, channel_name):
                     await message.channel.send(reason_line)
             else:
                 await message.channel.send(reason)
-                armory_parser.get_player_items(original_username)
             return
         else:
             logging.info("Searched player not found (this is good)")
             response = ":white_check_mark: Player **not found!**"
             await message.channel.send(response)
+
+            armory_responses = armoryF.get_messages_of(original_username)
+            if len(armory_responses) > 0:
+                for armory_response in armory_responses:
+                    await message.channel.send(armory_response)
             return
     else:
         logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
