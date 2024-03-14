@@ -56,8 +56,9 @@ def __get_player_items(html_document):
     items_data.extend(__extract_item_data(html_document, DIV_RIGHT_REGEX, ITEM_DATA_REGEX, False))
     items_data.extend(__extract_item_data(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX, False))
 
-    gs_list = []
     item_objects = []
+    items_type = []
+    items_gs = []
     for item in items_data:
         item_id = item.split('&')[0]
         item_enchant = __get_additions_item_(item, ENCHANT_REGEX)
@@ -69,29 +70,35 @@ def __get_player_items(html_document):
             return player_item
 
         item_gs = gs.get_item_gear_score(player_item)
-        gs_list.append(item_gs)
+
+        items_type.append(player_item.inventory_type)
+        items_gs.append(item_gs)
+
         item_objects.append(player_item)
-        print("-------------")
-        print(player_item.item_id)
-        print(player_item.name)
-        print(player_item.item_lvl)
-        print(player_item.quality)
-        print(player_item.inventory_type)
-        print(player_item.required_lvl)
-        print(player_item.has_sockets)
-        if not isinstance(player_item.enchant, ench.Enchant):
-            print(player_item.enchant)
-        else:
-            print("~~enchant:")
-            print(player_item.enchant.item_id)
-            print(player_item.enchant.name)
-            print(player_item.enchant.item_lvl)
-            print(player_item.enchant.quality)
-            print("~~~")
-        print(player_item.gems)
-        print("-------------")
-        print("GS:" + str(item_gs))
-    return item_objects, sum(gs_list)
+
+    return item_objects, __calculate_player_gs(items_type, items_gs)
+
+
+"""This method is required because gs was calculated incorrectly for some classes.
+    Example: Warrior has 2xTwo-Handed weapons and each weapon could have 988 GS.
+    As an result calculated GS were 7022 but real value in game is 6034.
+    This method horrible but required to cover most class cases that can equip 2xTwo-Handed or 2xOne-Handed weapons.
+"""
+def __calculate_player_gs(items_type, items_gs):
+    if len(items_type) != len(items_gs):
+        return -1
+
+    gs_sum = 0
+    for i in range(0, len(items_type)):
+        if items_type[i] == 'One-Hand' or items_type[i] == 'Two-Hand':
+            continue
+        gs_sum = gs_sum + items_gs[i]
+
+    weapon_indexes = [i for i, item in enumerate(items_type) if item == 'One-Hand' or item == 'Two-Hand']
+    duplicated_weapon_avg_gs = 0
+    for i in range(0, len(weapon_indexes)):
+        avg_gs = duplicated_weapon_avg_gs + items_gs[weapon_indexes[i]]
+    return gs_sum + (duplicated_weapon_avg_gs / 2)
 
 
 def __player_exist(html):
