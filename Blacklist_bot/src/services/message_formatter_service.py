@@ -52,8 +52,8 @@ class ArmoryFormatter:
 
         response.append(response_details)
 
-        items_right = ArmoryFormatter.__get_item_output(7, 14, player_items)
-        items_bottom = ArmoryFormatter.__get_item_output(15, len(player_items), player_items)
+        items_right = ArmoryFormatter.__get_item_output(6, 14, player_items)
+        items_bottom = ArmoryFormatter.__get_item_output(14, len(player_items), player_items)
 
         response.append(items_right)
         response.append(items_bottom)
@@ -71,7 +71,7 @@ class ArmoryFormatter:
             gem_data = ''
             if isinstance(item, im.Item):
                 item_url = conf.ITEM_DATABASE_URL_1 + item.item_id
-                item_data = item_data + '__' + item.item_type + '__: [' + item.name + '](<' + item_url + '>)\n'
+                item_data = item_data + '__' + item.inventory_type + '__: [' + item.name + '](<' + item_url + '>)\n'
                 enchant_data = '>' + SpecialCharacters.LONG_LONG_SPACE.value + '__Enchant__: '
 
                 if isinstance(item.enchant, ench.Enchant):

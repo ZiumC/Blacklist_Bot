@@ -122,8 +122,8 @@ def __create_gems(gems_data_line):
 
     gem_counter = 0
     for gem in gems_array:
-        if gem != str('0'):
-            gem_counter = +1
+        if str('0') not in gem:
+            gem_counter = gem_counter + 1
 
     return gem_counter
 
