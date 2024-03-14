@@ -70,7 +70,27 @@ def __get_player_items(html_document):
 
         item_gs = gs.get_item_gear_score(player_item)
         gs_list.append(item_gs)
-
+        item_objects.append(player_item)
+        print("-------------")
+        print(player_item.item_id)
+        print(player_item.name)
+        print(player_item.item_lvl)
+        print(player_item.quality)
+        print(player_item.inventory_type)
+        print(player_item.required_lvl)
+        print(player_item.has_sockets)
+        if not isinstance(player_item.enchant, ench.Enchant):
+            print(player_item.enchant)
+        else:
+            print("~~enchant:")
+            print(player_item.enchant.item_id)
+            print(player_item.enchant.name)
+            print(player_item.enchant.item_lvl)
+            print(player_item.enchant.quality)
+            print("~~~")
+        print(player_item.gems)
+        print("-------------")
+        print("GS:" + str(item_gs))
     return item_objects, sum(gs_list)
 
 
