@@ -40,6 +40,8 @@ def __get_character_info(html_document):
     character_data = __extract_data(html_document, DIV_CHARACTER_REGEX)
     character_data = character_data.replace('</', '')
     html_guild_data = __extract_data(html_document, SPAN_GUILD_REGEX)
+    if html_guild_data.__contains__('&nbsp;'):
+        return character_data, 'No guild', ''
     guild_link = (
             conf.BASE_ARMORY_URL + __extract_data(html_guild_data, LINK_REGEX).replace('href="', '').replace('"', ''))
     guild_name = __extract_data(html_guild_data, GUILD_REGEX).split('">')[1].replace('</a', '')
