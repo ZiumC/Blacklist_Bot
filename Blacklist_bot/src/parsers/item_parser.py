@@ -1,6 +1,4 @@
 from enum import Enum
-from typing import Final
-from utils import request_util as request
 import config as conf
 from models import item_model as im
 from models import enchant_model as ench

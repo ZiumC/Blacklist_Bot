@@ -1,7 +1,6 @@
 import config as conf
 from utils import request_util as request
 from parsers import item_parser
-from models import enchant_model as ench
 from models import item_model as im
 from services import gearscore_service as gs
 import re
