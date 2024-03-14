@@ -1,5 +1,3 @@
-from enum import Enum
-
 import config as conf
 from utils import request_util as request
 from parsers import item_parser
@@ -9,7 +7,10 @@ from services import gearscore_service as gs
 import re
 from typing import Final
 
-DIV_CLASS_REGEX: Final[str] = '<div class=\"level-race-class\">.*\\s*.*\\s*.*>$'
+DIV_CHARACTER_REGEX: Final[str] = 'L.+\\d+.+([\r\n\\s]+)</'
+SPAN_GUILD_REGEX: Final[str] = '<span class=\"guild-name\">.+</span>'
+LINK_REGEX: Final[str] = 'href=\".+\"'
+GUILD_REGEX: Final[str] = '<a.+>.+</a'
 DIV_LEFT_REGEX: Final[str] = '<div class=\"item-left\">((.|\n)*)<div class=\"item-right\">'
 DIV_RIGHT_REGEX: Final[str] = '<div class=\"item-right\">((.|\n)*)<div class=\"item-bottom\">'
 DIV_BOTTOM_REGEX: Final[str] = '<div class=\"item-bottom\">((.|\n)*)<div class=\"model\">'
@@ -18,7 +19,7 @@ ENCHANT_REGEX: Final[str] = 'ench=\\d*'
 GEMS_REGEX: Final[str] = 'gems=.*'
 
 
-def get_player_items(character_name):
+def character_armory(character_name):
     try:
         url = conf.ARMORY_URL + character_name + conf.ARMORY_SERVER
         html_document = request.get_html_document(url)
@@ -26,52 +27,62 @@ def get_player_items(character_name):
         if __player_exist(html_document):
             return "Player doesn't exits, given input: " + character_name
 
-        items_data = __get_items(html_document, DIV_LEFT_REGEX, ITEM_DATA_REGEX, True)
-        items_data.extend(__get_items(html_document, DIV_RIGHT_REGEX, ITEM_DATA_REGEX, False))
-        items_data.extend(__get_items(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX, False))
+        player_items, player_gs = __get_player_items(html_document)
+        character_info, guild_name, guild_link = __get_character_info(html_document)
+        return character_info, guild_name, guild_link, player_items, player_gs
 
-        gs_list = []
-        item_objects = []
-        for item in items_data:
-            item_id = item.split('&')[0]
-            item_enchant = __get_additions_item_(item, ENCHANT_REGEX)
-            item_gems = __get_additions_item_(item, GEMS_REGEX)
-
-            # item_objects.append(item_parser.create_player_item(item_id, item_enchant_or_gem))
-            player_item = item_parser.create_player_item(item_id, item_enchant, item_gems)
-
-            if not isinstance(player_item, im.Item):
-                return player_item
-
-            print("-------------")
-            print(player_item.item_id)
-            print(player_item.name)
-            print(player_item.item_lvl)
-            print(player_item.quality)
-            print(player_item.inventory_type)
-            print(player_item.required_lvl)
-            print(player_item.has_sockets)
-            if not isinstance(player_item.enchant, ench.Enchant):
-                print(player_item.enchant)
-            else:
-                print("~~enchant:")
-                print(player_item.enchant.item_id)
-                print(player_item.enchant.name)
-                print(player_item.enchant.item_lvl)
-                print(player_item.enchant.quality)
-                print("~~~")
-            print(player_item.gems)
-            gs_list.append(gs.get_item_gear_score(player_item))
-            print(gs.get_item_gear_score(player_item))
-            print("-------------")
-        print(sum(gs_list))
-        return item_objects
     except Exception as e:
         print(e)
         raise e
 
 
-def __get_items(html_document, pattern_1, pattern_2, is_left):
+def __get_character_info(html_document):
+    character_data = __extract_data(html_document, DIV_CHARACTER_REGEX)
+    character_data = character_data.replace('</', '')
+    html_guild_data = __extract_data(html_document, SPAN_GUILD_REGEX)
+    guild_link = (
+            conf.BASE_ARMORY_URL + __extract_data(html_guild_data, LINK_REGEX).replace('href="', '').replace('"', ''))
+    guild_name = __extract_data(html_guild_data, GUILD_REGEX).split('">')[1].replace('</a', '')
+    return character_data, guild_name, guild_link
+
+
+def __extract_data(html_elem, pattern_1):
+    p = re.compile(pattern_1)
+    return p.search(html_elem).group(0)
+
+
+def __get_player_items(html_document):
+    items_data = __extract_item_data(html_document, DIV_LEFT_REGEX, ITEM_DATA_REGEX, True)
+    items_data.extend(__extract_item_data(html_document, DIV_RIGHT_REGEX, ITEM_DATA_REGEX, False))
+    items_data.extend(__extract_item_data(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX, False))
+
+    gs_list = []
+    item_objects = []
+    for item in items_data:
+        item_id = item.split('&')[0]
+        item_enchant = __get_additions_item_(item, ENCHANT_REGEX)
+        item_gems = __get_additions_item_(item, GEMS_REGEX)
+
+        player_item = item_parser.create_player_item(item_id, item_enchant, item_gems)
+
+        if not isinstance(player_item, im.Item):
+            return player_item
+
+        item_gs = gs.get_item_gear_score(player_item)
+        gs_list.append(item_gs)
+
+    return item_objects, sum(gs_list)
+
+
+def __player_exist(html):
+    if conf.ARMORY_NOTFOUND_1 in html:
+        return True
+    if conf.ARMORY_NOTFOUND_2 in html:
+        return True
+    return False
+
+
+def __extract_item_data(html_document, pattern_1, pattern_2, is_left):
     try:
         div_element = re.search(pattern_1, html_document).group(1)
         div_items = re.findall(pattern_2, div_element)
@@ -102,11 +113,3 @@ def __get_additions_item_(item_data, pattern_1):
         return
     except AttributeError:
         return "Unable to find item. Regex: r1=" + pattern_1
-
-
-def __player_exist(html):
-    if conf.ARMORY_NOTFOUND_1 in html:
-        return True
-    if conf.ARMORY_NOTFOUND_2 in html:
-        return True
-    return False

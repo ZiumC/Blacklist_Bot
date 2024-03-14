@@ -1,8 +1,8 @@
 import logging
 from enum import Enum
 import config as conf
-from parsers import armory_character_parser as armory_parser
 from services import file_service
+from services.message_formatter_service import ArmoryFormatter as armoryF
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 
@@ -59,7 +59,7 @@ async def process_command(message, channel_name):
                     await message.channel.send(reason_line)
             else:
                 await message.channel.send(reason)
-                armory_parser.get_player_items(original_username)
+                messages_to_send = armoryF.get_messages_of(original_username)
             return
         else:
             logging.info("Searched player not found (this is good)")
