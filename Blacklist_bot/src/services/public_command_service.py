@@ -38,7 +38,7 @@ async def process_command(message, channel_name):
         return
 
     username = str.lower(split_message[1])
-    username_warmane_style = __get_Username_warmane_style(username)
+    username_warmane_style = __get_username_warmane_style(username)
 
     if command == PublicCommands.CHECK.value:
         user_data = file_service.get_user_data(username)
@@ -60,8 +60,9 @@ async def process_command(message, channel_name):
             return
         else:
             logging.info("Searched player not found (this is good)")
-            response = ":white_check_mark: Player **not found!**"
+            response = ":white_check_mark: Player **not found!**\n"
             await message.channel.send(response)
+            await message.channel.send(':hourglass_flowing_sand: Generating armory report...')
 
             armory_responses = armoryF.get_messages_of(username_warmane_style)
             if len(armory_responses) > 0:
@@ -75,5 +76,5 @@ async def process_command(message, channel_name):
         return
 
 
-def __get_Username_warmane_style(username):
+def __get_username_warmane_style(username):
     return username.title()

@@ -24,7 +24,7 @@ def character_armory(character_name):
         html_document = request.get_html_document(url)
 
         if __player_exist(html_document):
-            return "Player doesn't exits, given input: " + character_name
+            return '', '', '', '', ''
 
         player_items, player_gs = __get_player_items(html_document)
         character_info, guild_name, guild_link = __get_character_info(html_document)
