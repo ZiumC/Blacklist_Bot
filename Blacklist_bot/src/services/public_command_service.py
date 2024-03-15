@@ -4,20 +4,11 @@ import config as conf
 from services import file_service
 from services.message_formatter_service import ArmoryFormatter as armoryF
 from services.message_formatter_service import PublicCommandFormatter as pubF
+from services.message_formatter_service import ViablePublicCommands as PublicCommands
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 
-
-class PublicCommands(Enum):
-    CHECK = "!check"
-    HELP = "!help"
-
-
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
-
-help_message = (":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" +
-                "1) **" + PublicCommands.HELP.value + "**\n" +
-                "2) **" + PublicCommands.CHECK.value + "** [username]")
 
 
 async def process_command(message, channel_name):
@@ -28,7 +19,7 @@ async def process_command(message, channel_name):
     command = split_message[0]
 
     if command == PublicCommands.HELP.value:
-        await message.channel.send(help_message)
+        await message.channel.send(pubF.format_help())
         return
 
     if not await messHandler.is_message_length_valid(message, split_message, conf.MAX_PUBLIC_COMMAND_LENGTH):
@@ -53,19 +44,18 @@ async def process_command(message, channel_name):
                 await message.channel.send(message_line)
             return
         else:
-            logging.info("Searched player not found (this is good)")
-            response = ":white_check_mark: Player **not found!**\n"
-            await message.channel.send(response)
-            await message.channel.send(':hourglass_flowing_sand: Generating armory report...')
+            response_messages = pubF.format_bl_notfound()
+            for response_message in response_messages:
+                await message.channel.send(response_message)
 
-            armory_responses = armoryF.get_messages_of(username_warmane_style)
-            if len(armory_responses) > 0:
-                for armory_response in armory_responses:
+            armory_messages = armoryF.get_messages_of(username_warmane_style)
+            if len(armory_messages) > 0:
+                for armory_response in armory_messages:
                     await message.channel.send(armory_response)
             return
     else:
         logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
-        response_message = ":x: Unable to resolve command **'" + command + "'**.\n\n" + help_message
+        response_message = ":x: Unable to resolve command **'" + command + "'**.\n\n" + pubF.format_help()
         await message.channel.send(response_message)
         return
 

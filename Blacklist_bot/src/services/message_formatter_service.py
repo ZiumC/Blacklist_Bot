@@ -1,10 +1,16 @@
 from parsers import armory_character_parser as armory_parser
 import config as conf
+from enum import Enum
 from models import item_model as im
 from models import enchant_model as ench
 from message_handler import Handler as messHandler
 
 gs_wrong_count_in_classes = ['Hunter']
+
+
+class ViablePublicCommands(Enum):
+    CHECK = "!check"
+    HELP = "!help"
 
 
 class SpecialCharacters:
@@ -15,10 +21,12 @@ class SpecialCharacters:
     GEM = ':gem:'
     THINKING = ':thinking:'
     ORANGE_CIRCLE = ':orange_circle:'
+    GREEN_CIRCLE = ':green_circle:'
     STOP_SIGN = ':octagonal_sign:'
     ANGRY_FACE = ':face_with_symbols_over_mouth:'
     INFO_SIGN = ':information_source:'
     ARROW_SIGN = ':arrow_right:'
+    HOUR_GLASS = ':hourglass_flowing_sand:'
     LONG_SPACE = '          '
     LONG_LONG_SPACE = '                    '
 
@@ -48,6 +56,21 @@ class PublicCommandFormatter:
         else:
             response.append(emoji.ARROW_SIGN + ' Reason: ' + reason)
 
+        return response
+
+    @staticmethod
+    def format_bl_notfound():
+        emoji = SpecialCharacters
+        response = [emoji.CHECK + ' Player **notfound** on blacklist',
+                    emoji.HOUR_GLASS + ' Generating armory report...']
+        return response
+
+    @staticmethod
+    def format_help():
+        emoji = SpecialCharacters
+        response = emoji.GREEN_CIRCLE + ' Available commands in chat **#' + conf.PUBLIC_CHANNEL_BL + '** are:\n'
+        response = response + '1) **' + ViablePublicCommands.HELP.value + '**\n'
+        response = response + '2) **' + ViablePublicCommands.CHECK.value + '**  [username]\n'
         return response
 
 
