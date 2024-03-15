@@ -65,23 +65,18 @@ async def process_command(message):
 
     if command == AdminCommands.ADD.value:
         if file_service.get_user_data(username) != "":
-            response_messages = ":warning: Player **" + username + "** already exist in blacklist. Instead of adding new " \
-                                                                   "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_player_exist_error(username, AdminCommands.MODIFY.value))
             return
         description_reason = split_message[2]
         if file_service.add_user_to_bl(author_safe, username, description_reason):
-            response_messages = ":green_circle: Player **" + username + \
-                                "** has been added to blacklist! :heart:"
             logging.info("Added to BL: user=" + author_unsafe + ",player=" + username)
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_add_success(username))
         else:
-            response_messages = ":x: Unable to add **" + username + "** to blacklist! :broken_heart:"
             logging.warning(
                 "Unable to add to BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_add_error(username))
         return
 
     elif command == AdminCommands.MODIFY.value:
@@ -131,5 +126,5 @@ async def process_command(message):
 
     else:
         logging.error("Command missmatch: user=" + author_unsafe + ",full_command=" + command_to_process)
-        await message.channel.send(admF.format_unknown_error(command))
+        await message.channel.send(admF.format_unknown_error(command, COMMANDS_LIST))
         return

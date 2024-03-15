@@ -61,7 +61,7 @@ async def process_command(message, channel_name):
             return
     else:
         logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
-        await message.channel.send(pubF.format_error(command))
+        await message.channel.send(pubF.format_error(command, COMMANDS_LIST))
         return
 
 

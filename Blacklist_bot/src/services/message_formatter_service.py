@@ -21,6 +21,9 @@ class SpecialCharacters:
     INFO_SIGN = ':information_source:'
     DIAMOND_SIGN = ':large_blue_diamond:'
     ARROW_SIGN = ':arrow_right:'
+    CRAZY_FACE = ':woozy_face:'
+    BROKEN_HEART = ':broken_heart:'
+    HEART = ':heart:'
     HOUR_GLASS = ':hourglass_flowing_sand:'
     LONG_SPACE = '          '
     LONG_LONG_SPACE = '                    '
@@ -57,8 +60,23 @@ class AdminCommandFormatter:
         return emoji.CROSS + ' Did you forget about mark: \' - \'? ' + emoji.THINKING
 
     @staticmethod
-    def format_unknown_error(command):
-        return emoji.CROSS + 'Unable to resolve command **' + command + '**.\n\n' + AdminCommandFormatter.format_help()
+    def format_unknown_error(command, commands_list):
+        return (emoji.CROSS + 'Unable to resolve command **' + command + '**.\n\n'
+                + AdminCommandFormatter.format_help(commands_list))
+
+    @staticmethod
+    def format_player_exist_error(username, modify_command):
+        return (emoji.WARNING + ' Player **' + username +
+                '** already exist in blacklist. Instead of adding new one maybe consider to use command **' +
+                modify_command + '**? ' + emoji.CRAZY_FACE)
+
+    @staticmethod
+    def format_add_error(username):
+        return emoji.CROSS + ' Unable to add **' + username + '** to blacklist! ' + emoji.BROKEN_HEART
+
+    @staticmethod
+    def format_add_success(username):
+        return emoji.GREEN_CIRCLE + ' Player **' + username + '** has been added to blacklist! ' + emoji.HEART
 
 
 class PublicCommandFormatter:
@@ -98,8 +116,9 @@ class PublicCommandFormatter:
         return response
 
     @staticmethod
-    def format_error(command):
-        return emoji.CROSS + ' unable to resolve command **' + command + '**\n\n' + PublicCommandFormatter.format_help()
+    def format_error(command, commands_list):
+        return (emoji.CROSS + ' unable to resolve command **' + command + '**\n\n'
+                + PublicCommandFormatter.format_help(commands_list))
 
 
 class ArmoryFormatter:
