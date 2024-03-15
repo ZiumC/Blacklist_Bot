@@ -14,9 +14,9 @@ class PublicCommands(Enum):
 
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
 
-help_message = ":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" \
-                                                                                          "1) **" + PublicCommands.HELP.value + "**\n" \
-                                                                                                                                "2) **" + PublicCommands.CHECK.value + "** [username]"
+help_message = (":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" +
+                "1) **" + PublicCommands.HELP.value + "**\n" +
+                "2) **" + PublicCommands.CHECK.value + "** [username]")
 
 
 async def process_command(message, channel_name):
@@ -25,9 +25,6 @@ async def process_command(message, channel_name):
     split_message = safe_string.split(' ')
 
     command = split_message[0]
-    # this is unsafe string!
-    # it is needed due to get original player name
-    original_username = message.content.split(' ')[1]
 
     if command == PublicCommands.HELP.value:
         await message.channel.send(help_message)
@@ -41,6 +38,7 @@ async def process_command(message, channel_name):
         return
 
     username = str.lower(split_message[1])
+    username_warmane_style = __get_Username_warmane_style(username)
 
     if command == PublicCommands.CHECK.value:
         user_data = file_service.get_user_data(username)
@@ -65,7 +63,7 @@ async def process_command(message, channel_name):
             response = ":white_check_mark: Player **not found!**"
             await message.channel.send(response)
 
-            armory_responses = armoryF.get_messages_of(original_username)
+            armory_responses = armoryF.get_messages_of(username_warmane_style)
             if len(armory_responses) > 0:
                 for armory_response in armory_responses:
                     await message.channel.send(armory_response)
@@ -75,3 +73,7 @@ async def process_command(message, channel_name):
         response_message = ":x: Unable to resolve command **'" + command + "'**.\n\n" + help_message
         await message.channel.send(response_message)
         return
+
+
+def __get_Username_warmane_style(username):
+    return username.title()
