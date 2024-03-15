@@ -1,11 +1,17 @@
 import logging
 import config as conf
 from services import file_service
+from enum import Enum
 from services.message_formatter_service import ArmoryFormatter as armoryF
 from services.message_formatter_service import PublicCommandFormatter as pubF
-from services.message_formatter_service import ViablePublicCommands as PublicCommands
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
+
+
+class PublicCommands(Enum):
+    CHECK = "!check"
+    HELP = "!help"
+
 
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
 

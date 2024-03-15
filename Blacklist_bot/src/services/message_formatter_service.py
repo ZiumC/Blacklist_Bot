@@ -1,16 +1,12 @@
 from parsers import armory_character_parser as armory_parser
 import config as conf
-from enum import Enum
 from models import item_model as im
 from models import enchant_model as ench
 from message_handler import Handler as messHandler
+from services.public_command_service import PublicCommands
+from services.admin_service import AdminCommands
 
 gs_wrong_count_in_classes = ['Hunter']
-
-
-class ViablePublicCommands(Enum):
-    CHECK = "!check"
-    HELP = "!help"
 
 
 class SpecialCharacters:
@@ -25,6 +21,7 @@ class SpecialCharacters:
     STOP_SIGN = ':octagonal_sign:'
     ANGRY_FACE = ':face_with_symbols_over_mouth:'
     INFO_SIGN = ':information_source:'
+    DIAMOND_SIGN = ':large_blue_diamond:'
     ARROW_SIGN = ':arrow_right:'
     HOUR_GLASS = ':hourglass_flowing_sand:'
     LONG_SPACE = '          '
@@ -32,6 +29,25 @@ class SpecialCharacters:
 
 
 emoji = SpecialCharacters
+
+
+class AdminCommandFormatter:
+    @staticmethod
+    def format_help():
+        response = emoji.GREEN_CIRCLE + ' Available commands in chat **#' + conf.MODERATION_CHANNEL_BL + '** are:\n'
+        response = response + '1) **' + AdminCommands.HELP.value + '**\n'
+        response = response + '2) **' + AdminCommands.ADD.value + '** [username] -[description]\n'
+        response = response + '3) **' + AdminCommands.MODIFY.value + '** [username] -[description]\n'
+        response = response + '4) **' + AdminCommands.DELETE.value + '** [username] -[description]\n'
+        response = response + '5) **' + AdminCommands.LAST.value + '**'
+        response = response + emoji.DIAMOND_SIGN + (' If you want write only announce message, just type'
+                                                    ' character **$** before your message and bot will ignore it.')
+        return response
+
+    @staticmethod
+    def format_unknown_error(command):
+        return emoji.CROSS + 'Unable to resolve command **' + command + '**.\n\n' + AdminCommandFormatter.format_help()
+
 
 class PublicCommandFormatter:
     @staticmethod
@@ -65,13 +81,14 @@ class PublicCommandFormatter:
     @staticmethod
     def format_help():
         response = emoji.GREEN_CIRCLE + ' Available commands in chat **#' + conf.PUBLIC_CHANNEL_BL + '** are:\n'
-        response = response + '1) **' + ViablePublicCommands.HELP.value + '**\n'
-        response = response + '2) **' + ViablePublicCommands.CHECK.value + '**  [username]\n'
+        response = response + '1) **' + PublicCommands.HELP.value + '**\n'
+        response = response + '2) **' + PublicCommands.CHECK.value + '**  [username]\n'
         return response
 
     @staticmethod
     def format_error(command):
         return emoji.CROSS + ' unable to resolve command **' + command + '**\n\n' + PublicCommandFormatter.format_help()
+
 
 class ArmoryFormatter:
 
