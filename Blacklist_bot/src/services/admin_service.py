@@ -81,25 +81,22 @@ async def process_command(message):
 
     elif command == AdminCommands.MODIFY.value:
         if file_service.get_user_data(username) == "":
-            response_messages = ":x: Player **" + username + "** to modify **not found** :cry:"
             logging.warning(
                 "Player to update not found: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_notfound_error(username))
             return
         description_reason = split_message[2]
         if file_service.update_user_data(author_safe, username, description_reason):
-            response_messages = ":green_circle: Player **" + username + "** has beem updated! :heart:"
             logging.info("Updated player in BL: user=" + author_unsafe + ",player=" + username)
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_update_success(username))
         else:
-            response_messages = ":x: Unable to update **" + username + "**! :broken_heart:"
             logging.warning(
                 "Unable to update player in BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_update_error(username))
         return
 
     elif command == AdminCommands.DELETE.value:

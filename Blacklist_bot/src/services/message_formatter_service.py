@@ -24,6 +24,7 @@ class SpecialCharacters:
     CRAZY_FACE = ':woozy_face:'
     BROKEN_HEART = ':broken_heart:'
     HEART = ':heart:'
+    CRY_FACE = ':cry:'
     HOUR_GLASS = ':hourglass_flowing_sand:'
     LONG_SPACE = '          '
     LONG_LONG_SPACE = '                    '
@@ -78,6 +79,17 @@ class AdminCommandFormatter:
     def format_add_success(username):
         return emoji.GREEN_CIRCLE + ' Player **' + username + '** has been added to blacklist! ' + emoji.HEART
 
+    @staticmethod
+    def format_notfound_error(username):
+        return emoji.CROSS + ' Player **' + username + '** to modify **not found** ' + emoji.CRY_FACE
+
+    @staticmethod
+    def format_update_success(username):
+        return emoji.GREEN_CIRCLE + ' Player **' + username + '** has been updated ' + emoji.HEART
+
+    @staticmethod
+    def format_update_error(username):
+        return emoji.CROSS + ' Unable to update **' + username + '** data ' + emoji.BROKEN_HEART
 
 class PublicCommandFormatter:
     @staticmethod
