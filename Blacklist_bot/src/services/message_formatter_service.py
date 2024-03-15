@@ -31,11 +31,11 @@ class SpecialCharacters:
     LONG_LONG_SPACE = '                    '
 
 
+emoji = SpecialCharacters
+
 class PublicCommandFormatter:
     @staticmethod
     def format_bl_warning(username, added_by, date_added):
-        emoji = SpecialCharacters
-
         response = emoji.STOP_SIGN + ' Player **' + username + '** exist on black list! ' + emoji.ANGRY_FACE + '\n\n'
 
         response = (response + emoji.INFO_SIGN + ' Player **' + username + '** has been added to black list by **' +
@@ -45,8 +45,6 @@ class PublicCommandFormatter:
 
     @staticmethod
     def format_bl_reason(reason):
-        emoji = SpecialCharacters
-
         response = []
 
         if len(reason) > conf.MAX_DISCORD_MESSAGE_LENGTH:
@@ -60,19 +58,20 @@ class PublicCommandFormatter:
 
     @staticmethod
     def format_bl_notfound():
-        emoji = SpecialCharacters
         response = [emoji.CHECK + ' Player **notfound** on blacklist',
                     emoji.HOUR_GLASS + ' Generating armory report...']
         return response
 
     @staticmethod
     def format_help():
-        emoji = SpecialCharacters
         response = emoji.GREEN_CIRCLE + ' Available commands in chat **#' + conf.PUBLIC_CHANNEL_BL + '** are:\n'
         response = response + '1) **' + ViablePublicCommands.HELP.value + '**\n'
         response = response + '2) **' + ViablePublicCommands.CHECK.value + '**  [username]\n'
         return response
 
+    @staticmethod
+    def format_error(command):
+        return emoji.CROSS + ' unable to resolve command **' + command + '**\n\n' + PublicCommandFormatter.format_help()
 
 class ArmoryFormatter:
 
@@ -80,8 +79,6 @@ class ArmoryFormatter:
     def get_messages_of(username):
         character_info, guild_name, guild_link, player_items, player_gs = \
             armory_parser.character_armory(username)
-
-        emoji = SpecialCharacters
 
         if ((str(80) not in character_info) or
                 (not guild_name) or (not guild_link) or
@@ -128,7 +125,6 @@ class ArmoryFormatter:
 
     @staticmethod
     def __get_item_output(start_index, end_index, player_items):
-        emoji = SpecialCharacters
         item_data = ''
         for i in range(start_index, end_index):
             item_data = item_data + '>' + emoji.LONG_SPACE

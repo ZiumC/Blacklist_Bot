@@ -1,5 +1,4 @@
 import logging
-from enum import Enum
 import config as conf
 from services import file_service
 from services.message_formatter_service import ArmoryFormatter as armoryF
@@ -55,8 +54,7 @@ async def process_command(message, channel_name):
             return
     else:
         logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
-        response_message = ":x: Unable to resolve command **'" + command + "'**.\n\n" + pubF.format_help()
-        await message.channel.send(response_message)
+        await message.channel.send(pubF.format_error(command))
         return
 
 
