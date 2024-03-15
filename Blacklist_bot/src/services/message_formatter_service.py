@@ -1,8 +1,8 @@
 from parsers import armory_character_parser as armory_parser
 import config as conf
-from enum import Enum
 from models import item_model as im
 from models import enchant_model as ench
+from message_handler import Handler as messHandler
 
 gs_wrong_count_in_classes = ['Hunter']
 
@@ -15,8 +15,40 @@ class SpecialCharacters:
     GEM = ':gem:'
     THINKING = ':thinking:'
     ORANGE_CIRCLE = ':orange_circle:'
+    STOP_SIGN = ':octagonal_sign:'
+    ANGRY_FACE = ':face_with_symbols_over_mouth:'
+    INFO_SIGN = ':information_source:'
+    ARROW_SIGN = ':arrow_right:'
     LONG_SPACE = '          '
     LONG_LONG_SPACE = '                    '
+
+
+class PublicCommandFormatter:
+    @staticmethod
+    def format_bl_warning(username, added_by, date_added):
+        emoji = SpecialCharacters
+
+        response = emoji.STOP_SIGN + ' Player **' + username + '** exist on black list! ' + emoji.ANGRY_FACE + '\n\n'
+
+        response = (response + emoji.INFO_SIGN + ' Player **' + username + '** has been added to black list by **' +
+                    added_by + ' ** at **' + date_added + '**.')
+
+        return response
+
+    @staticmethod
+    def format_bl_reason(reason):
+        emoji = SpecialCharacters
+
+        response = []
+
+        if len(reason) > conf.MAX_DISCORD_MESSAGE_LENGTH:
+            reason_chunks = messHandler.divide_message(reason, conf.MAX_DISCORD_MESSAGE_LENGTH)
+            for reason_line in reason_chunks:
+                response.append(reason_line)
+        else:
+            response.append(emoji.ARROW_SIGN + ' Reason: ' + reason)
+
+        return response
 
 
 class ArmoryFormatter:
@@ -45,11 +77,16 @@ class ArmoryFormatter:
         else:
             response_details = response_details + '> **Guild**: [' + guild_name + '](<' + guild_link + '>)\n'
 
-        if 'Hunter' in character_info:
-            response_details \
-                = (response_details + '> **GearScore**: ' +
-                   str(int(player_gs)) + ' ' + emoji.WARNING + ' _(may be inaccurate!)_\n')
-        else:
+        warning_has_added = False
+        for character_class in gs_wrong_count_in_classes:
+            if character_class in character_info:
+                response_details \
+                    = (response_details + '> **GearScore**: ' +
+                       str(int(player_gs)) + ' ' + emoji.WARNING + ' _(may be inaccurate!)_\n')
+                warning_has_added = True
+                break
+
+        if not warning_has_added:
             response_details = response_details + '> **GearScore**: ' + str(int(player_gs)) + '\n'
         response_details = response_details + '> **Gear**:\n'
 

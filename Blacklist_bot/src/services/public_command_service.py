@@ -3,6 +3,7 @@ from enum import Enum
 import config as conf
 from services import file_service
 from services.message_formatter_service import ArmoryFormatter as armoryF
+from services.message_formatter_service import PublicCommandFormatter as pubF
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 
@@ -44,19 +45,12 @@ async def process_command(message, channel_name):
         user_data = file_service.get_user_data(username)
         if user_data != "":
             sections_data = user_data.split(conf.SEPARATOR)
-            response = ":octagonal_sign: Player **" + username + \
-                       "** exist on black list! :face_with_symbols_over_mouth:\n\n " \
-                       ":information_source: Player **" + username + "** has been added to black list by **" \
-                       + sections_data[3] + "** at **" + sections_data[2] + "**.\n"
+            response = pubF.format_bl_warning(username_warmane_style, sections_data[3], sections_data[2])
             await message.channel.send(response)
-            reason = ":arrow_right: Reason: " + sections_data[1]
-            if len(reason) > conf.MAX_DISCORD_MESSAGE_LENGTH:
-                logging.info("Response reason was split")
-                reason_chunks = messHandler.divide_message(reason, conf.MAX_DISCORD_MESSAGE_LENGTH)
-                for reason_line in reason_chunks:
-                    await message.channel.send(reason_line)
-            else:
-                await message.channel.send(reason)
+
+            reason_response = pubF.format_bl_reason(sections_data[1])
+            for message_line in reason_response:
+                await message.channel.send(message_line)
             return
         else:
             logging.info("Searched player not found (this is good)")
