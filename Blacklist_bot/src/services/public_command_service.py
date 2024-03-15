@@ -13,6 +13,7 @@ class PublicCommands(Enum):
     HELP = "!help"
 
 
+COMMANDS_LIST = [PublicCommands.HELP.value, PublicCommands.CHECK.value]
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
 
 
@@ -24,7 +25,7 @@ async def process_command(message, channel_name):
     command = split_message[0]
 
     if command == PublicCommands.HELP.value:
-        await message.channel.send(pubF.format_help())
+        await message.channel.send(pubF.format_help(COMMANDS_LIST))
         return
 
     if not await messHandler.is_message_length_valid(message, split_message, conf.MAX_PUBLIC_COMMAND_LENGTH):

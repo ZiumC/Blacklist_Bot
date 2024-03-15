@@ -16,8 +16,10 @@ class AdminCommands(Enum):
     HELP = '!help'
 
 
-COMMANDS_TO_IGNORE = [AdminCommands.DELETE.value,
-                      AdminCommands.HELP.value,
+COMMANDS_LIST = [AdminCommands.HELP.value, AdminCommands.ADD.value,
+                 AdminCommands.MODIFY.value, AdminCommands.DELETE.value,
+                 AdminCommands.LAST.value]
+COMMANDS_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value,
                       AdminCommands.LAST.value]
 
 
@@ -32,22 +34,23 @@ async def process_command(message):
 
     if command not in COMMANDS_TO_IGNORE and not messHandler.contains(command_to_process, '-'):
         logging.warning("Incorrect command format: user=" + author_unsafe + ",full_command=" + command_to_process)
-        await message.channel.send(":x: Did you forget about mark:'-'? :thinking:")
+        await message.channel.send(admF.format_forgotten_sign_error())
         return
 
     if command == AdminCommands.HELP.value:
-        await message.channel.send(admF.format_help())
+        await message.channel.send(admF.format_help(COMMANDS_LIST))
         return
+
     if command == AdminCommands.LAST.value:
         last_user_data = file_service.get_last_user_data()
         sections_data = last_user_data.split(conf.SEPARATOR)
         last_user_name = sections_data[0]
-        response = ":orange_circle: Last added player to blacklist is **" + last_user_name + "**.\n\n" \
-                                                                                             ":information_source: Player has been added by **" + \
-                   sections_data[3] + "** at **" + sections_data[2] + "**.\n" \
-                                                                      ":arrow_right: Reason: " + sections_data[1]
+
+        response_messages = admF.format_last_added(last_user_name, sections_data[3], sections_data[2], sections_data[1])
         logging.info("Checking last player: user=" + author_unsafe + ",last player=" + last_user_name)
-        await message.channel.send(response)
+
+        for response_message in response_messages:
+            await message.channel.send(response_message)
         return
 
     if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_MODERATION_COMMAND_LENGTH):
@@ -62,68 +65,68 @@ async def process_command(message):
 
     if command == AdminCommands.ADD.value:
         if file_service.get_user_data(username) != "":
-            response = ":warning: Player **" + username + "** already exist in blacklist. Instead of adding new " \
-                                                          "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
-            await message.channel.send(response)
+            response_messages = ":warning: Player **" + username + "** already exist in blacklist. Instead of adding new " \
+                                                                   "one maybe consider to use command **" + AdminCommands.MODIFY.value + "**? :woozy_face:"
+            await message.channel.send(response_messages)
             return
         description_reason = split_message[2]
         if file_service.add_user_to_bl(author_safe, username, description_reason):
-            response = ":green_circle: Player **" + username + \
-                       "** has been added to blacklist! :heart:"
+            response_messages = ":green_circle: Player **" + username + \
+                                "** has been added to blacklist! :heart:"
             logging.info("Added to BL: user=" + author_unsafe + ",player=" + username)
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
         else:
-            response = ":x: Unable to add **" + username + "** to blacklist! :broken_heart:"
+            response_messages = ":x: Unable to add **" + username + "** to blacklist! :broken_heart:"
             logging.warning(
                 "Unable to add to BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
         return
 
     elif command == AdminCommands.MODIFY.value:
         if file_service.get_user_data(username) == "":
-            response = ":x: Player **" + username + "** to modify **not found** :cry:"
+            response_messages = ":x: Player **" + username + "** to modify **not found** :cry:"
             logging.warning(
                 "Player to update not found: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
             return
         description_reason = split_message[2]
         if file_service.update_user_data(author_safe, username, description_reason):
-            response = ":green_circle: Player **" + username + "** has beem updated! :heart:"
+            response_messages = ":green_circle: Player **" + username + "** has beem updated! :heart:"
             logging.info("Updated player in BL: user=" + author_unsafe + ",player=" + username)
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
         else:
-            response = ":x: Unable to update **" + username + "**! :broken_heart:"
+            response_messages = ":x: Unable to update **" + username + "**! :broken_heart:"
             logging.warning(
                 "Unable to update player in BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
         return
 
     elif command == AdminCommands.DELETE.value:
         if file_service.get_user_data(username) == "":
-            response = ":x: Player **" + username + "** to delete **not found** :cry:"
+            response_messages = ":x: Player **" + username + "** to delete **not found** :cry:"
             logging.warning(
                 "Player to delete not found: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
             return
         if file_service.remove_user_from_bl(username):
-            response = ":green_circle: Player **" + username + "** has been removed from blacklist! :heart:"
+            response_messages = ":green_circle: Player **" + username + "** has been removed from blacklist! :heart:"
             logging.info("Deleted player from BL: user=" + author_unsafe + ",player=" + username)
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
         else:
-            response = ":x: Unable to remove **" + username + "** from blacklist! :broken_heart:"
+            response_messages = ":x: Unable to remove **" + username + "** from blacklist! :broken_heart:"
             logging.warning(
                 "Unable do delete player from BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response)
+            await message.channel.send(response_messages)
         return
 
     else:

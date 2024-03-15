@@ -3,8 +3,6 @@ import config as conf
 from models import item_model as im
 from models import enchant_model as ench
 from message_handler import Handler as messHandler
-from services.public_command_service import PublicCommands
-from services.admin_service import AdminCommands
 
 gs_wrong_count_in_classes = ['Hunter']
 
@@ -33,16 +31,30 @@ emoji = SpecialCharacters
 
 class AdminCommandFormatter:
     @staticmethod
-    def format_help():
+    def format_help(commands_list):
         response = emoji.GREEN_CIRCLE + ' Available commands in chat **#' + conf.MODERATION_CHANNEL_BL + '** are:\n'
-        response = response + '1) **' + AdminCommands.HELP.value + '**\n'
-        response = response + '2) **' + AdminCommands.ADD.value + '** [username] -[description]\n'
-        response = response + '3) **' + AdminCommands.MODIFY.value + '** [username] -[description]\n'
-        response = response + '4) **' + AdminCommands.DELETE.value + '** [username] -[description]\n'
-        response = response + '5) **' + AdminCommands.LAST.value + '**'
+        response = response + '1) **' + commands_list[0] + '**\n'
+        response = response + '2) **' + commands_list[1] + '** [username] -[description]\n'
+        response = response + '3) **' + commands_list[2] + '** [username] -[description]\n'
+        response = response + '4) **' + commands_list[3] + '** [username]\n'
+        response = response + '5) **' + commands_list[4] + '**\n'
         response = response + emoji.DIAMOND_SIGN + (' If you want write only announce message, just type'
                                                     ' character **$** before your message and bot will ignore it.')
         return response
+
+    @staticmethod
+    def format_last_added(username, added_by, date_added, reason):
+        response = emoji.ORANGE_CIRCLE + ' Last added player to blacklist is **' + username + '**\n\n'
+
+        response = (response + emoji.INFO_SIGN + '  Player has been added by **' + added_by + '** at **' +
+                    date_added + '**\n')
+        response_messages = [response]
+        response_messages.extend(PublicCommandFormatter.format_bl_reason(reason))
+        return response_messages
+
+    @staticmethod
+    def format_forgotten_sign_error():
+        return emoji.CROSS + ' Did you forget about mark: \' - \'? ' + emoji.THINKING
 
     @staticmethod
     def format_unknown_error(command):
@@ -79,10 +91,10 @@ class PublicCommandFormatter:
         return response
 
     @staticmethod
-    def format_help():
+    def format_help(command_list):
         response = emoji.GREEN_CIRCLE + ' Available commands in chat **#' + conf.PUBLIC_CHANNEL_BL + '** are:\n'
-        response = response + '1) **' + PublicCommands.HELP.value + '**\n'
-        response = response + '2) **' + PublicCommands.CHECK.value + '**  [username]\n'
+        response = response + '1) **' + command_list[0] + '**\n'
+        response = response + '2) **' + command_list[1] + '**  [username]\n'
         return response
 
     @staticmethod
