@@ -123,7 +123,7 @@ def prepare_line_to_write(who_prepared, username, description):
 def read_db_file(file_path):
     if os.path.exists(file_path):
         db = []
-        with open(file_path, 'r') as f_in:
+        with open(file_path, 'r', encoding="cp1252") as f_in:
             for line in f_in:
                 db.append(line)
         return db

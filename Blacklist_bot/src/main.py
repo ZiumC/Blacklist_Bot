@@ -7,7 +7,7 @@ import services.admin_service as adm
 import services.public_command_service as pub
 import services.log_service as log
 from message_handler import Handler as messHandler
-from src.utils.safe_str_util import SafeStr as sStr
+from utils.safe_str_util import SafeStr as sStr
 
 
 intent = discord.Intents.default()

@@ -117,11 +117,11 @@ def __create_enchant(enchant_data_line):
 def __create_gems(gems_data_line):
     if not gems_data_line:
         return conf.MISSING_FLAG
-    gems_array = gems_data_line.replace('gems=', '').split(':')
+    gems_array = gems_data_line.replace('gems=', '').split('&')[0].split(':')
 
     gem_counter = 0
     for gem in gems_array:
-        if str('0') not in gem:
+        if str('0') != str(gem):
             gem_counter = gem_counter + 1
 
     return gem_counter
