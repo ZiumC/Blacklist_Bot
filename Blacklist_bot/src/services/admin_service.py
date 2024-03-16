@@ -25,6 +25,8 @@ class LogErrType(Enum):
     WARNING = 'WARNING'
 
 
+LOG_ERROR_TYPES = [LogErrType.CRITICAL.value, LogErrType.ERROR.value,
+                   LogErrType.WARNING.value]
 COMMANDS_LIST = [AdminCommands.HELP.value, AdminCommands.ADD.value,
                  AdminCommands.MODIFY.value, AdminCommands.DELETE.value,
                  AdminCommands.LAST.value, AdminCommands.LOG_ERR.value,
@@ -111,16 +113,10 @@ async def process_command(message):
         return
 
     elif command == AdminCommands.LOG_ERR.value:
-        given_log_type = command_part[1].lower()
-        if given_log_type == LogErrType.CRITICAL.value.lower():
-            await message.channel.send('1')
-            return
-        elif given_log_type == LogErrType.ERROR.value.lower():
-            await message.channel.send('2')
-            return
-        elif given_log_type == LogErrType.WARNING.value.lower():
-            warning_log_lines = log_service.get_log_lines_by(LogErrType.WARNING.value)
-            response_messages = admF.format_log_output(warning_log_lines)
+        given_log_type = command_part[1].upper()
+        if given_log_type in LOG_ERROR_TYPES:
+            warning_log_lines = log_service.get_log_lines_by(given_log_type)
+            response_messages = admF.format_log_output(given_log_type.upper(), warning_log_lines)
             for response_line in response_messages:
                 await message.channel.send(response_line)
             return

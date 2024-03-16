@@ -101,7 +101,7 @@ class AdminCommandFormatter:
         return emoji.WARNING + ' Blacklist is empty! ' + emoji.WARNING
 
     @staticmethod
-    def format_log_output(log_lines):
+    def format_log_output(log_err_type, log_lines):
         response_messages = []
         if len(log_lines) > 0:
             response = '```'
@@ -110,12 +110,12 @@ class AdminCommandFormatter:
                     response_messages.append(response + '```')
                     response = '```'
                 else:
-                    response = response + line + '\n'
+                    response = response + line
             response = response + '```'
             response_messages.append(response)
             return response_messages
 
-        return ["Searched data notfound in log"]
+        return ['Log doesn\'t contains any line with **' + log_err_type + '**']
 
 
 class PublicCommandFormatter:
