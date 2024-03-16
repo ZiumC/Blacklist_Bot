@@ -5,6 +5,7 @@ from discord.ext import commands
 import config as conf
 import services.admin_service as adm
 import services.public_command_service as pub
+import services.log_service as log
 from message_handler import Handler as messHandler
 from src.utils.safe_str_util import SafeStr as sStr
 
@@ -31,7 +32,7 @@ async def on_message(message):
 
     # checking if sent message comes from private channel
     if messHandler.is_private_channel(message, conf.PRIVATE_CHANNEL):
-        logging.warning("Message comes from private channel: user=" + author)
+        logging.info("Message comes from private channel: user=" + author)
         response_message = ":x: Sorry but I can't handle private messages."
         await message.channel.send(response_message)
         return
@@ -121,5 +122,6 @@ logging.basicConfig(
     filename=conf.PATH_TO_LOG_FILE
 )
 
+log.clear_log('')
 logging.info("---- new run ----")
 client.run(conf.DISCORD_TOKEN)

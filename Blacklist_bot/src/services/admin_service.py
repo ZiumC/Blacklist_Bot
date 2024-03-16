@@ -3,6 +3,7 @@ import re as regex
 from enum import Enum
 import config as conf
 from services import file_service
+from services import log_service
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 from services.message_formatter_service import AdminCommandFormatter as admF
@@ -14,13 +15,25 @@ class AdminCommands(Enum):
     DELETE = '!delete'
     LAST = '!last'
     HELP = '!help'
+    LOG_ERR = '!log_err'
+    CLEAR_LOG = '!clear_log'
 
 
+class LogErrType(Enum):
+    CRITICAL = 'CRITICAL'
+    ERROR = 'ERROR'
+    WARNING = 'WARNING'
+
+
+LOG_ERROR_TYPES = [LogErrType.CRITICAL.value, LogErrType.ERROR.value,
+                   LogErrType.WARNING.value]
 COMMANDS_LIST = [AdminCommands.HELP.value, AdminCommands.ADD.value,
                  AdminCommands.MODIFY.value, AdminCommands.DELETE.value,
-                 AdminCommands.LAST.value]
+                 AdminCommands.LAST.value, AdminCommands.LOG_ERR.value,
+                 AdminCommands.CLEAR_LOG.value]
 COMMANDS_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value,
-                      AdminCommands.LAST.value]
+                      AdminCommands.LAST.value, AdminCommands.LOG_ERR.value,
+                      AdminCommands.CLEAR_LOG.value]
 
 
 async def process_command(message):
@@ -56,6 +69,17 @@ async def process_command(message):
         for response_message in response_messages:
             await message.channel.send(response_message)
         return
+    elif command == AdminCommands.CLEAR_LOG.value:
+        if str(message.author.id) in conf.OWNER_ID:
+            log_service.clear_log()
+            logging.info('Log cleared by: ' + message.author.name + ', id=' + str(message.author.id))
+            await message.channel.send("Log has been cleared!")
+            return
+        else:
+            logging.critical(
+                "Unauthorized try to perform command: command=" + command_to_process + ", by user=" + message.author.name)
+            await message.channel.send("You are unauthorized to perform this command!")
+            return
 
     if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_MODERATION_COMMAND_LENGTH):
         logging.warning(
@@ -99,7 +123,20 @@ async def process_command(message):
             await message.channel.send(admF.format_command_error(username, command))
         return
 
+    elif command == AdminCommands.LOG_ERR.value:
+        given_log_type = command_part[1].upper()
+        if given_log_type in LOG_ERROR_TYPES:
+            warning_log_lines = log_service.get_log_lines_by(given_log_type)
+            response_messages = admF.format_log_output(given_log_type.upper(), warning_log_lines)
+            for response_line in response_messages:
+                await message.channel.send(response_line)
+            return
+        else:
+            logging.error("Log type missmatch: user=" + author_safe + ",full_command=" + command_to_process)
+            await message.channel.send(admF.format_unknown_command_error(command_to_process, COMMANDS_LIST))
+            return
+
     else:
-        logging.error("Command missmatch: user=" + author_unsafe + ",full_command=" + command_to_process)
+        logging.error("Command missmatch: user=" + author_safe + ",full_command=" + command_to_process)
         await message.channel.send(admF.format_unknown_command_error(command, COMMANDS_LIST))
         return

@@ -8,6 +8,7 @@ MAX_REQUEST_PROCESS_TIME: Final[int] = 30
 MAX_MODERATION_COMMAND_LENGTH: Final[int] = 2
 MAX_PUBLIC_COMMAND_LENGTH: Final[int] = 2
 SEPARATOR: Final[str] = "|"
+OWNER_ID: Final[str] = os.getenv('OwnerId')
 
 # Strongly recommended is to modify this configuration strings
 ADMINISTRATIVE_ROLE: Final[str] = os.getenv('AdminRole')
@@ -36,4 +37,3 @@ MISSING_FLAG: Final[str] = 'Missing'
 DEFAULT_ENCHANT_VALUE: Final[str] = 'None'
 DEFAULT_GEMS_VALUE: Final[str] = 'None'
 DEFAULT_NOT_EXIST_VALUE: Final[str] = 'Notfound in db'
-

@@ -42,6 +42,8 @@ class AdminCommandFormatter:
         response = response + '3) **' + commands_list[2] + '** [username] -[description]\n'
         response = response + '4) **' + commands_list[3] + '** [username]\n'
         response = response + '5) **' + commands_list[4] + '**\n'
+        response = response + '6) **' + commands_list[5] + '** [type] (type can be: CRITICAL, ERROR, WARNING)\n'
+        response = response + '7) **' + commands_list[6] + '** (viable for creator)\n'
         response = response + emoji.DIAMOND_SIGN + (' If you want write only announce message, just type'
                                                     ' character **$** before your message and bot will ignore it.')
         return response
@@ -97,6 +99,24 @@ class AdminCommandFormatter:
     @staticmethod
     def format_players_notfound_error():
         return emoji.WARNING + ' Blacklist is empty! ' + emoji.WARNING
+
+    @staticmethod
+    def format_log_output(log_err_type, log_lines):
+        response_messages = []
+        if len(log_lines) > 0:
+            response = '```'
+            for line in log_lines:
+                if len(response) > (conf.MAX_DISCORD_MESSAGE_LENGTH - 150):
+                    response_messages.append(response + '```')
+                    response = '```'
+                else:
+                    response = response + line
+            response = response + '```'
+            response_messages.append(response)
+            return response_messages
+
+        return ['Log doesn\'t contains any line with **' + log_err_type + '**']
+
 
 class PublicCommandFormatter:
     @staticmethod
