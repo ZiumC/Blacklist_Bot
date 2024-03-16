@@ -61,7 +61,7 @@ class AdminCommandFormatter:
         return emoji.CROSS + ' Did you forget about mark: \' - \'? ' + emoji.THINKING
 
     @staticmethod
-    def format_unknown_error(command, commands_list):
+    def format_unknown_command_error(command, commands_list):
         return (emoji.CROSS + 'Unable to resolve command **' + command + '**.\n\n'
                 + AdminCommandFormatter.format_help(commands_list))
 
@@ -72,24 +72,28 @@ class AdminCommandFormatter:
                 modify_command + '**? ' + emoji.CRAZY_FACE)
 
     @staticmethod
-    def format_add_error(username):
-        return emoji.CROSS + ' Unable to add **' + username + '** to blacklist! ' + emoji.BROKEN_HEART
-
-    @staticmethod
     def format_add_success(username):
         return emoji.GREEN_CIRCLE + ' Player **' + username + '** has been added to blacklist! ' + emoji.HEART
 
     @staticmethod
     def format_notfound_error(username):
-        return emoji.CROSS + ' Player **' + username + '** to modify **not found** ' + emoji.CRY_FACE
+        return emoji.CROSS + ' Player **' + username + '** not found at blacklist ' + emoji.CRY_FACE
 
     @staticmethod
     def format_update_success(username):
         return emoji.GREEN_CIRCLE + ' Player **' + username + '** has been updated ' + emoji.HEART
 
     @staticmethod
-    def format_update_error(username):
-        return emoji.CROSS + ' Unable to update **' + username + '** data ' + emoji.BROKEN_HEART
+    def format_command_error(username, command):
+        response = (emoji.CROSS + ' Unable to perform command **' + command + '** for player **' + username + '** data '
+                    + emoji.BROKEN_HEART + '\n')
+        response = response + 'Contact ASAP with Toxic Rafał'
+        return response
+
+    @staticmethod
+    def format_delete_success(username):
+        return emoji.GREEN_CIRCLE + ' Player **' + username + '** has been deleted from blacklist!'
+
 
 class PublicCommandFormatter:
     @staticmethod

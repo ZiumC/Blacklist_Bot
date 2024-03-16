@@ -76,7 +76,7 @@ async def process_command(message):
                 "Unable to add to BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(admF.format_add_error(username))
+            await message.channel.send(admF.format_command_error(username, command))
         return
 
     elif command == AdminCommands.MODIFY.value:
@@ -96,32 +96,29 @@ async def process_command(message):
                 "Unable to update player in BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(admF.format_update_error(username))
+            await message.channel.send(admF.format_command_error(username, command))
         return
 
     elif command == AdminCommands.DELETE.value:
         if file_service.get_user_data(username) == "":
-            response_messages = ":x: Player **" + username + "** to delete **not found** :cry:"
             logging.warning(
                 "Player to delete not found: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_notfound_error(username))
             return
         if file_service.remove_user_from_bl(username):
-            response_messages = ":green_circle: Player **" + username + "** has been removed from blacklist! :heart:"
             logging.info("Deleted player from BL: user=" + author_unsafe + ",player=" + username)
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_delete_success(username))
         else:
-            response_messages = ":x: Unable to remove **" + username + "** from blacklist! :broken_heart:"
             logging.warning(
                 "Unable do delete player from BL: user=" + author_unsafe + ",player="
                 + username + ",full_command=" + command_to_process
             )
-            await message.channel.send(response_messages)
+            await message.channel.send(admF.format_command_error(username, command))
         return
 
     else:
         logging.error("Command missmatch: user=" + author_unsafe + ",full_command=" + command_to_process)
-        await message.channel.send(admF.format_unknown_error(command, COMMANDS_LIST))
+        await message.channel.send(admF.format_unknown_command_error(command, COMMANDS_LIST))
         return
