@@ -1,8 +1,9 @@
 import logging
-from enum import Enum
 import config as conf
 from services import file_service
+from enum import Enum
 from services.message_formatter_service import ArmoryFormatter as armoryF
+from services.message_formatter_service import PublicCommandFormatter as pubF
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 
@@ -12,11 +13,8 @@ class PublicCommands(Enum):
     HELP = "!help"
 
 
+COMMANDS_LIST = [PublicCommands.HELP.value, PublicCommands.CHECK.value]
 COMMANDS_TO_IGNORE = [PublicCommands.HELP.value]
-
-help_message = (":green_circle: Available commands in chat **#" + conf.PUBLIC_CHANNEL_BL + "** is:\n" +
-                "1) **" + PublicCommands.HELP.value + "**\n" +
-                "2) **" + PublicCommands.CHECK.value + "** [username]")
 
 
 async def process_command(message, channel_name):
@@ -27,7 +25,7 @@ async def process_command(message, channel_name):
     command = split_message[0]
 
     if command == PublicCommands.HELP.value:
-        await message.channel.send(help_message)
+        await message.channel.send(pubF.format_help(COMMANDS_LIST))
         return
 
     if not await messHandler.is_message_length_valid(message, split_message, conf.MAX_PUBLIC_COMMAND_LENGTH):
@@ -38,42 +36,34 @@ async def process_command(message, channel_name):
         return
 
     username = str.lower(split_message[1])
-    username_warmane_style = __get_Username_warmane_style(username)
+    username_warmane_style = __get_username_warmane_style(username)
 
     if command == PublicCommands.CHECK.value:
         user_data = file_service.get_user_data(username)
         if user_data != "":
             sections_data = user_data.split(conf.SEPARATOR)
-            response = ":octagonal_sign: Player **" + username + \
-                       "** exist on black list! :face_with_symbols_over_mouth:\n\n " \
-                       ":information_source: Player **" + username + "** has been added to black list by **" \
-                       + sections_data[3] + "** at **" + sections_data[2] + "**.\n"
-            await message.channel.send(response)
-            reason = ":arrow_right: Reason: " + sections_data[1]
-            if len(reason) > conf.MAX_DISCORD_MESSAGE_LENGTH:
-                logging.info("Response reason was split")
-                reason_chunks = messHandler.divide_message(reason, conf.MAX_DISCORD_MESSAGE_LENGTH)
-                for reason_line in reason_chunks:
-                    await message.channel.send(reason_line)
-            else:
-                await message.channel.send(reason)
-            return
-        else:
-            logging.info("Searched player not found (this is good)")
-            response = ":white_check_mark: Player **not found!**"
+            response = pubF.format_bl_warning(username_warmane_style, sections_data[3], sections_data[2])
             await message.channel.send(response)
 
-            armory_responses = armoryF.get_messages_of(username_warmane_style)
-            if len(armory_responses) > 0:
-                for armory_response in armory_responses:
+            reason_response = pubF.format_bl_reason(sections_data[1])
+            for message_line in reason_response:
+                await message.channel.send(message_line)
+            return
+        else:
+            response_messages = pubF.format_bl_notfound()
+            for response_message in response_messages:
+                await message.channel.send(response_message)
+
+            armory_messages = armoryF.get_messages_of(username_warmane_style)
+            if len(armory_messages) > 0:
+                for armory_response in armory_messages:
                     await message.channel.send(armory_response)
             return
     else:
         logging.error("Command missmatch: user=" + author + ",full_command=" + safe_string)
-        response_message = ":x: Unable to resolve command **'" + command + "'**.\n\n" + help_message
-        await message.channel.send(response_message)
+        await message.channel.send(pubF.format_error(command, COMMANDS_LIST))
         return
 
 
-def __get_Username_warmane_style(username):
+def __get_username_warmane_style(username):
     return username.title()
