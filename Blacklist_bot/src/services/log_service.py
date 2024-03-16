@@ -1,5 +1,6 @@
 import services.file_service as file
 import config as conf
+import logging
 
 
 def get_log_lines_by(log_err_type):
@@ -11,3 +12,9 @@ def get_log_lines_by(log_err_type):
                 filtered_log.append(line)
         return filtered_log
     return []
+
+
+def clear_log(message='---- log after clear ----'):
+    open(conf.PATH_TO_LOG_FILE, 'w').close()
+    if message != '':
+        logging.info(message)

@@ -69,6 +69,17 @@ async def process_command(message):
         for response_message in response_messages:
             await message.channel.send(response_message)
         return
+    elif command == AdminCommands.CLEAR_LOG.value:
+        if str(message.author.id) in conf.OWNER_ID:
+            log_service.clear_log()
+            logging.info('Log cleared by: ' + message.author.name + ', id=' + str(message.author.id))
+            await message.channel.send("Log has been cleared!")
+            return
+        else:
+            logging.critical(
+                "Unauthorized try to perform command: command=" + command_to_process + ", by user=" + message.author.name)
+            await message.channel.send("You are unauthorized to perform this command!")
+            return
 
     if not await messHandler.is_message_length_valid(message, command_part, conf.MAX_MODERATION_COMMAND_LENGTH):
         logging.warning(
