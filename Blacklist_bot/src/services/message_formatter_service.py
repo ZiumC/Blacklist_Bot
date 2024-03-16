@@ -94,6 +94,9 @@ class AdminCommandFormatter:
     def format_delete_success(username):
         return emoji.GREEN_CIRCLE + ' Player **' + username + '** has been deleted from blacklist!'
 
+    @staticmethod
+    def format_players_notfound_error():
+        return emoji.WARNING + ' Blacklist is empty! ' + emoji.WARNING
 
 class PublicCommandFormatter:
     @staticmethod

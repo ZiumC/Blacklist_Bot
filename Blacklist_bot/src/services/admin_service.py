@@ -44,10 +44,14 @@ async def process_command(message):
     if command == AdminCommands.LAST.value:
         last_user_data = file_service.get_last_user_data()
         sections_data = last_user_data.split(conf.SEPARATOR)
-        last_user_name = sections_data[0]
 
+        if len(sections_data) <= 1:
+            logging.warning('Black list is empty!')
+            await message.channel.send(admF.format_players_notfound_error())
+            return
+
+        last_user_name = sections_data[0]
         response_messages = admF.format_last_added(last_user_name, sections_data[3], sections_data[2], sections_data[1])
-        logging.info("Checking last player: user=" + author_unsafe + ",last player=" + last_user_name)
 
         for response_message in response_messages:
             await message.channel.send(response_message)
@@ -69,52 +73,29 @@ async def process_command(message):
             return
         description_reason = split_message[2]
         if file_service.add_user_to_bl(author_safe, username, description_reason):
-            logging.info("Added to BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(admF.format_add_success(username))
         else:
-            logging.warning(
-                "Unable to add to BL: user=" + author_unsafe + ",player="
-                + username + ",full_command=" + command_to_process
-            )
             await message.channel.send(admF.format_command_error(username, command))
         return
 
     elif command == AdminCommands.MODIFY.value:
         if file_service.get_user_data(username) == "":
-            logging.warning(
-                "Player to update not found: user=" + author_unsafe + ",player="
-                + username + ",full_command=" + command_to_process
-            )
             await message.channel.send(admF.format_notfound_error(username))
             return
         description_reason = split_message[2]
         if file_service.update_user_data(author_safe, username, description_reason):
-            logging.info("Updated player in BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(admF.format_update_success(username))
         else:
-            logging.warning(
-                "Unable to update player in BL: user=" + author_unsafe + ",player="
-                + username + ",full_command=" + command_to_process
-            )
             await message.channel.send(admF.format_command_error(username, command))
         return
 
     elif command == AdminCommands.DELETE.value:
         if file_service.get_user_data(username) == "":
-            logging.warning(
-                "Player to delete not found: user=" + author_unsafe + ",player="
-                + username + ",full_command=" + command_to_process
-            )
             await message.channel.send(admF.format_notfound_error(username))
             return
         if file_service.remove_user_from_bl(username):
-            logging.info("Deleted player from BL: user=" + author_unsafe + ",player=" + username)
             await message.channel.send(admF.format_delete_success(username))
         else:
-            logging.warning(
-                "Unable do delete player from BL: user=" + author_unsafe + ",player="
-                + username + ",full_command=" + command_to_process
-            )
             await message.channel.send(admF.format_command_error(username, command))
         return
 

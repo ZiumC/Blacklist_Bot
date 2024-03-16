@@ -1,11 +1,13 @@
 import discord
 import logging
+import traceback
 from discord.ext import commands
 import config as conf
 import services.admin_service as adm
 import services.public_command_service as pub
 from message_handler import Handler as messHandler
 from src.utils.safe_str_util import SafeStr as sStr
+
 
 intent = discord.Intents.default()
 intent.message_content = True
@@ -69,7 +71,7 @@ async def on_message(message):
     # handling public channel
     if message.channel.name == conf.PUBLIC_CHANNEL_BL:
         try:
-            logging.info("Public command has been used: user=" + author + ",message=" + message.content)
+            logging.info("Public command: user=" + author + ",message=" + message.content)
             await pub.process_command(message, conf.PUBLIC_CHANNEL_BL)
             return
         except Exception as e:
@@ -77,8 +79,8 @@ async def on_message(message):
                 "Public command error: user=" + author
                 + ",message=" + sStr.safe_string(message.content, author)
             )
-            print(e)
-            logging.exception(e)
+            traceback.print_exc()
+            logging.exception(traceback.print_exc())
             await message.channel.send(conf.EXCEPTION_RESPONSE)
 
     # handling moderation channel
@@ -102,8 +104,8 @@ async def on_message(message):
                 "Private command error: user=" + author
                 + ",message=" + sStr.safe_string(message.content, author)
             )
-            print(e)
-            logging.exception(e)
+            traceback.print_exc()
+            logging.exception(traceback.print_exc())
             await message.channel.send(conf.EXCEPTION_RESPONSE)
     else:
         logging.error("Channel miss match: channel=" + message.channel.name)
