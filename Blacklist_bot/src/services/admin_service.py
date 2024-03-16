@@ -14,13 +14,23 @@ class AdminCommands(Enum):
     DELETE = '!delete'
     LAST = '!last'
     HELP = '!help'
+    LOG_ERR = '!log_err'
+    CLEAR_LOG = '!clear_log'
+
+
+class LogErrType(Enum):
+    CRITICAL = 'CRITICAL'
+    ERROR = 'ERROR'
+    WARNING = 'WARNING'
 
 
 COMMANDS_LIST = [AdminCommands.HELP.value, AdminCommands.ADD.value,
                  AdminCommands.MODIFY.value, AdminCommands.DELETE.value,
-                 AdminCommands.LAST.value]
+                 AdminCommands.LAST.value, AdminCommands.LOG_ERR.value,
+                 AdminCommands.CLEAR_LOG.value]
 COMMANDS_TO_IGNORE = [AdminCommands.DELETE.value, AdminCommands.HELP.value,
-                      AdminCommands.LAST.value]
+                      AdminCommands.LAST.value, AdminCommands.LOG_ERR.value,
+                      AdminCommands.CLEAR_LOG.value]
 
 
 async def process_command(message):
@@ -99,7 +109,23 @@ async def process_command(message):
             await message.channel.send(admF.format_command_error(username, command))
         return
 
+    elif command == AdminCommands.LOG_ERR.value:
+        given_log_type = command_part[1].lower()
+        if given_log_type == LogErrType.CRITICAL.value.lower():
+            await message.channel.send('1')
+            return
+        elif given_log_type == LogErrType.ERROR.value.lower():
+            await message.channel.send('2')
+            return
+        elif given_log_type == LogErrType.WARNING.value.lower():
+            await message.channel.send('3')
+            return
+        else:
+            logging.error("Log type missmatch: user=" + author_safe + ",full_command=" + command_to_process)
+            await message.channel.send(admF.format_unknown_command_error(command_to_process, COMMANDS_LIST))
+            return
+
     else:
-        logging.error("Command missmatch: user=" + author_unsafe + ",full_command=" + command_to_process)
+        logging.error("Command missmatch: user=" + author_safe + ",full_command=" + command_to_process)
         await message.channel.send(admF.format_unknown_command_error(command, COMMANDS_LIST))
         return

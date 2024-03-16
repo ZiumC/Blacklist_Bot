@@ -42,6 +42,8 @@ class AdminCommandFormatter:
         response = response + '3) **' + commands_list[2] + '** [username] -[description]\n'
         response = response + '4) **' + commands_list[3] + '** [username]\n'
         response = response + '5) **' + commands_list[4] + '**\n'
+        response = response + '6) **' + commands_list[5] + '** [type] (type can be: CRITICAL, ERROR, WARNING)\n'
+        response = response + '7) **' + commands_list[6] + '** (viable for creator)\n'
         response = response + emoji.DIAMOND_SIGN + (' If you want write only announce message, just type'
                                                     ' character **$** before your message and bot will ignore it.')
         return response

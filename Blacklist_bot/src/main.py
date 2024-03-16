@@ -31,7 +31,7 @@ async def on_message(message):
 
     # checking if sent message comes from private channel
     if messHandler.is_private_channel(message, conf.PRIVATE_CHANNEL):
-        logging.warning("Message comes from private channel: user=" + author)
+        logging.info("Message comes from private channel: user=" + author)
         response_message = ":x: Sorry but I can't handle private messages."
         await message.channel.send(response_message)
         return
