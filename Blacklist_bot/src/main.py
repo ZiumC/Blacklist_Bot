@@ -121,5 +121,6 @@ logging.basicConfig(
     filename=conf.PATH_TO_LOG_FILE
 )
 
+open(conf.PATH_TO_LOG_FILE, 'w').close()
 logging.info("---- new run ----")
 client.run(conf.DISCORD_TOKEN)

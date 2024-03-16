@@ -1,5 +1,4 @@
 import os
-import csv
 import logging
 from datetime import date
 from datetime import datetime
@@ -122,8 +121,20 @@ def prepare_line_to_write(who_prepared, username, description):
 
 
 def read_db_file(file_path):
-    db = []
-    with open(file_path, 'r') as f_in:
-        for line in f_in:
-            db.append(line)
-    return db
+    if os.path.exists(file_path):
+        db = []
+        with open(file_path, 'r') as f_in:
+            for line in f_in:
+                db.append(line)
+        return db
+    return []
+
+
+def read_file(file_path):
+    if os.path.exists(file_path):
+        file_data = []
+        with open(file_path, 'r', encoding="utf-8") as f_in:
+            for line in f_in:
+                file_data.append(line)
+        return file_data
+    return []

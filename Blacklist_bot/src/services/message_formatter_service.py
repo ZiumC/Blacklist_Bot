@@ -100,6 +100,24 @@ class AdminCommandFormatter:
     def format_players_notfound_error():
         return emoji.WARNING + ' Blacklist is empty! ' + emoji.WARNING
 
+    @staticmethod
+    def format_log_output(log_lines):
+        response_messages = []
+        if len(log_lines) > 0:
+            response = '```'
+            for line in log_lines:
+                if len(response) > (conf.MAX_DISCORD_MESSAGE_LENGTH - 150):
+                    response_messages.append(response + '```')
+                    response = '```'
+                else:
+                    response = response + line + '\n'
+            response = response + '```'
+            response_messages.append(response)
+            return response_messages
+
+        return ["Searched data notfound in log"]
+
+
 class PublicCommandFormatter:
     @staticmethod
     def format_bl_warning(username, added_by, date_added):

@@ -3,6 +3,7 @@ import re as regex
 from enum import Enum
 import config as conf
 from services import file_service
+from services import log_service
 from utils.safe_str_util import SafeStr as sStr
 from message_handler import Handler as messHandler
 from services.message_formatter_service import AdminCommandFormatter as admF
@@ -118,7 +119,10 @@ async def process_command(message):
             await message.channel.send('2')
             return
         elif given_log_type == LogErrType.WARNING.value.lower():
-            await message.channel.send('3')
+            warning_log_lines = log_service.get_log_lines_by(LogErrType.WARNING.value)
+            response_messages = admF.format_log_output(warning_log_lines)
+            for response_line in response_messages:
+                await message.channel.send(response_line)
             return
         else:
             logging.error("Log type missmatch: user=" + author_safe + ",full_command=" + command_to_process)
