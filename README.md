@@ -1,17 +1,17 @@
 <p align="center">
   <img alt="Static Badge" src="https://img.shields.io/badge/python-3.9_%7C_3.10-blue">
-  <img alt="Static Badge" src="https://img.shields.io/badge/bot_version-1.5-purple">
+  <img alt="Static Badge" src="https://img.shields.io/badge/bot_version-2.2-purple">
   <img alt="GitHub last commit (by committer)" src="https://img.shields.io/github/last-commit/ZiumC/Blacklist_Bot">
 </p>   
   
 # Blacklist_Bot.py
-Bot for discord servers written in Python that allows to keep players in blacklist from any game by using specified commands. 
+Bot for discord servers written in Python that allows to keep players in blacklist from any game by using specified commands. To work easily with bot just install <a href="https://github.com/ZiumC/SetChatBox_Addon" rel="nofollow">this</a> addon to the game.
 
 # Features
-- This project is using ```async``` and ```await``` methods to call Discord API.
 - Allows to handle messages from server only (private channels aren't handled).
 - It have protection against DDOS attacks.
 - Generates log to debug (or check) if something went wrong with programme.
+- Calls warmane webpage for user data.
 
 # How to run this bot?
 1) You should generate your discord token bot (<a href="https://www.writebots.com/discord-bot-token/" rel="nofollow">Tutorial how to do that</a>).  
@@ -20,7 +20,8 @@ Bot for discord servers written in Python that allows to keep players in blackli
 1.3) Search for option ```MESSAGE CONTENT INTENT``` (this is near the end of page) and click on button to enable it (by default this is disabled and it causes an exception in program).  
 2) Install docker on your machine. You can use ```docker desktop``` or ```docker command line```. I strongly recommend to use ```docker command line``` (further installation steps will be based on ```docker command line```).
 3) Install ```Python 3.9``` or ```Python 3.10``` on your local machine.
-4) Modify file ```config.py```.
+4) Setup environment variables ```AdminRole```, ```PublicChanel```, ```ModChanel```, ```GuildID```, ```DiscordToken```, ```ListPath```, ```LogPath```, ```itemDb```, ```enchantDb```
+5) Modify file ```config.py```.
 ```python
 import os
 from typing import Final
@@ -31,155 +32,85 @@ MAX_DISCORD_MESSAGE_LENGTH: Final[int] = 1999
 MAX_REQUEST_PROCESS_TIME: Final[int] = 30
 MAX_MODERATION_COMMAND_LENGTH: Final[int] = 2
 MAX_PUBLIC_COMMAND_LENGTH: Final[int] = 2
+SEPARATOR: Final[str] = "|"
+OWNER_ID: Final[str] = os.getenv('OwnerId')
 
 # Strongly recommended is to modify this configuration strings
-# Administrative channel name that will be accessible for users who have proper permissions to modify blacklist
-ADMINISTRATIVE_ROLE: Final[str] = ''
-# Public channel name that will be accessible for all users to check if someone exist in blacklist
-PUBLIC_CHANNEL_BL: Final[str] = ''
-# Administrative channel name that will be accessible for users who have proper permissions to modify blacklist
-MODERATION_CHANNEL_BL: Final[str] = ''
-# Your awesome exception message goes here
-EXCEPTION_RESPONSE: Final[str] = ''
-# Your server id goes here - this is used to prevent use your bot with your token on other discord server
-GUILD_ID: Final[int] = 0
-# Your discord token goes here
-DISCORD_TOKEN: Final[str] = ''
+ADMINISTRATIVE_ROLE: Final[str] = os.getenv('AdminRole')
+PUBLIC_CHANNEL_BL: Final[str] = os.getenv('PublicChanel')
+MODERATION_CHANNEL_BL: Final[str] = os.getenv('ModChanel')
+EXCEPTION_RESPONSE: Final[str] = 'exception'
+GUILD_ID: Final[int] = int(os.getenv('GuildID'))
+DISCORD_TOKEN: Final[str] = os.getenv('DiscordToken')
 
-# Set path to blacklist file. Note that, path should contain file name with extension (recommended file extension is .csv)
-PATH_TO_BLOCKED_USERS_FILE: Final[str] = ''
-# Set path to blacklist log. Note that, path should contain file name with extension (recommended file extension is .txt)
-PATH_TO_LOG_FILE: Final[str] = ''
+# Set paths to bot data files
+PATH_TO_BLOCKED_USERS_FILE: Final[str] = os.getenv('ListPath')
+PATH_TO_LOG_FILE: Final[str] = os.getenv('LogPath')
+PATH_TO_ITEM_DB_FILE: Final[str] = os.getenv('itemDb')
+PATH_TO_ENCHANT_TRANSLATION_FILE: Final[str] = os.getenv('enchantDb')
+
+# Config for warmane armory
+BASE_ARMORY_URL: Final[str] = "https://armory.warmane.com"
+ARMORY_URL: Final[str] = BASE_ARMORY_URL + "/character/"
+ARMORY_SERVER: Final[str] = "/Lordaeron/profile"
+ARMORY_NOTFOUND_1: Final[str] = "Page not found"
+ARMORY_NOTFOUND_2: Final[str] = "does not exist"
+ITEM_DATABASE_URL_1: Final[str] = "https://wotlk.cavernoftime.com/item="
+
+# Configs for items
+MISSING_FLAG: Final[str] = 'Missing'
+DEFAULT_ENCHANT_VALUE: Final[str] = 'None'
+DEFAULT_GEMS_VALUE: Final[str] = 'None'
+DEFAULT_NOT_EXIST_VALUE: Final[str] = 'Notfound in db'
 ``` 
 5) Add ```Dockerfile``` to project. This file should be placed in ```src``` directory.
 ```Dockerfile
-FROM python:3.10  
-# creating directories for project in docker container  
-RUN mkdir -p /srv/src  
-RUN mkdir -p /srv/src/services  
-RUN mkdir -p /srv/bot-data  
-RUN mkdir -p /srv/bot-data/blacklist  
-RUN mkdir -p /srv/bot-data/log
+FROM python:3.10
+
+EXPOSE 443
+EXPOSE 80
+EXPOSE 53
   
 # installing required packages in docker container  
 RUN python3 -m pip install -U discord.py  
-  
+RUN python3 -m pip install -U requests
+
 # adding bot data to docker container
 # note that, clausule copy looks like: COPY [source-local-machine-path] [destination-docker-container-path]
-COPY ./Bot-Data/bl.csv /srv/bot-data/blacklist/bl.csv  
-COPY ./Bot-Data/log.txt /srv/bot-data/log/log.txt  
-  
-# adding project files from local machine to docker container
-# note that, clausule add looks like: ADD [source-local-machine-path] [destination-docker-container-path]  
-ADD main.py /srv/src  
-ADD safe_str.py /srv/src  
-ADD message_handler.py /srv/src  
-ADD config.py /srv/src 
-ADD ./services/admin_service.py /srv/src/services  
-ADD ./services/file_service.py /srv/src/services  
-ADD ./services/public_command_service.py /srv/src/services  
+COPY . /srv
   
 # running bot  
 CMD ["python", "/srv/src/main.py"]  
 ```
-6) (OPTIONAL) You can limit resources used by docker container. To do that just add ```Docker-compose.yml``` to project. This file should be placed in ```src``` directory.
-```yml
-version: "3.9"
-service:
-  bot-service:
-    image: [your-awesome-image-name]
-    container_name: [your-awesome-container-name]
+6) Go to ```src``` folder to build docker image. Just type command: ```docker build --network=host -t [your-image-name] . ```
+7) Create file ```docker-compose.yml``` as follow:
+```yaml
+version: '3.8'
+services:
+  [your-service-name]:
+    image: '[your-image-name]'
+    restart: 'unless-stopped'
+    container_name: '[your-container-name]'
+    network_mode: 'host' #<- I know this is unelegant but without that appears problem:
+                         #'Temporary failure in name resolution [Errno -3] ... unable connect to discord.com:443'
+    volumes:
+      - './Bot-Data:/srv/Bot-Data'    
+    environment:
+      - OwnerId=[your id]
+      - AdminRole=[admin role]
+      - PublicChanel=[pub channel]
+      - GuildID=[your discord server id]
+      - DiscordToken=[your discord token]
+      - ListPath=/srv/Bot-Data/bl.csv
+      - LogPath=/srv/Bot-Data/log.txt
+      - itemDb=/srv/Bot-Data/itemsDB.csv
+      - enchantDb=/srv/Bot-Data/itemId-to-enchantId.txt
     mem_reservation: "1g"
     cpus: "1"
-    cpuset: "2"
+    cpuset: "2" 
 ```
-7) Build your image and run the container. To do thad just follow these steps:    
-1. Go to ```src``` folder of project: ```cd "/path/to/bot/project/on/local-machine/src"```    
-2. Build your image: ```docker build -t [your-awesome-image-name] . ```    
-3. Run your docker container with image: ```ocker run --name [your-awesome-container-name] [your-awesome-image-name]```    
-
-# Troubleshooting with module names - python
-If your bot can't run due to exception ```No module named 'src'``` or ```Package doesn't have process_command(...)``` you have to modify imports of local packages - just add ```src.```.   
-Just change imports in entire bot project files from this:
-```python
-# Procject file: main.py
-import discord
-import logging
-from discord.ext import commands
-import config as conf
-import services.admin_service as adm
-import services.public_command_service as pub
-from message_handler import Handler as messHandler
-from safe_str import SafeStr as sStr
-
-# Procject file: admin_service.py
-import logging
-import re as regex
-from enum import Enum
-import config as conf
-from services import file_service
-from safe_str import SafeStr as sStr
-from message_handler import Handler as messHandler
-
-# Procject file: file_service.py
-import os
-import logging
-from datetime import date
-from datetime import datetime
-import config as conf
-from safe_str import SafeStr as sStr
-
-# Procject file: public_command_service.py
-import logging
-from enum import Enum
-import config as conf
-from services import file_service
-from safe_str import SafeStr as sStr
-from message_handler import Handler as messHandler
-```
-to this:
-```python
-# Procject file: main.py
-import discord
-import logging
-from discord.ext import commands
-import src.config as conf
-import src.services.admin_service as adm
-import src.services.public_command_service as pub
-from src.message_handler import Handler as messHandler
-from src.safe_str import SafeStr as sStr
-
-# Procject file: admin_service.py
-import logging
-import re as regex
-from enum import Enum
-import src.config as conf
-from src.services import file_service
-from src.safe_str import SafeStr as sStr
-from src.message_handler import Handler as messHandler
-
-# Procject file: file_service.py
-import os
-import logging
-from datetime import date
-from datetime import datetime
-import src.config as conf
-from src.safe_str import SafeStr as sStr
-
-# Procject file: public_command_service.py
-import logging
-from enum import Enum
-import src.config as conf
-from src.services import file_service
-from src.safe_str import SafeStr as sStr
-from src.message_handler import Handler as messHandler
-```  
-# Troubleshooting with temporary failure in name resolution [Errno -3]
-If you are running docker on linux machine, you may meet problem: 'temporary failure in name resolution' on bot startup. It may aquire because linux machine by default uses local DNS server delivered by your Internet operator. So if you connect to server discord.com every day, probably you won't see this problem. But if your local DNS doesn't cache current IP of discord.com, bot will stop working. To solve this problem you should follow these steps:
-1) Run command: ```sudo nano /etc/default/docker```
-2) Inside this file add line: ```DOCKER_OPTS="--dns 8.8.8.8 --dns 10.252.252.252"``` then save it
-3) Run command: ```docker restart```
-4) At the end run docker container
+8) To run just type ```docker-compose up -d```
+  
 
 # How to work with bot?  
 To run that bot on your discord server you should create 2 separate channels. First (public) channel will be accessible for everyone without any special role. Second channel (administrative) will be accessible for only users who had a **special administrative role**. That special role prevents untrusted users to perform actions such as adding, modifying or deleting users on blacklist.
@@ -193,6 +124,8 @@ To run that bot on your discord server you should create 2 separate channels. Fi
 - ```!modify [username_to_update] -[updated reason why player exist on blacklist]``` - updates player and reason why still exist in blacklist.
 - ```!delete [username_to_delete]``` - removes player from blacklist.
 - ```!last``` - prints last added player to blacklist.
+- ```!log_err [type] (type can be: CRITICAL, ERROR, WARNING)``` - returns bot log
+- ```!clear_log (viable for creator)``` - clears bot log
 - ```$Some message``` - bot will ignore message that starts with **$**. This is used to announce some changes or inform other moderative users that bot will be e.g. turned off, updated, etc.,  
     
 # Packages used
