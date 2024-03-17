@@ -167,9 +167,9 @@ class ArmoryFormatter:
         character_info, guild_name, guild_link, player_items, player_gs = \
             armory_parser.character_armory(username)
 
-        if ((str(80) not in character_info) or
-                (not guild_name) or (not guild_link) or
-                (not player_items) or (not player_gs)):
+        if ((str(80) not in character_info) and
+                (not guild_name) and (not guild_link) and
+                (not player_items) and (not player_gs)):
             return [emoji.ORANGE_CIRCLE + ' Player **' + username + '** not found in warmane armory ' + emoji.THINKING]
 
         player_url = conf.ARMORY_URL + username + conf.ARMORY_SERVER
