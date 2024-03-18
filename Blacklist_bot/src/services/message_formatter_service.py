@@ -207,16 +207,22 @@ class ArmoryFormatter:
                 response_details = response_details + '> **GearScore**: ' + str(int(player_gs)) + '\n'
         response_details = response_details + '> **Gear**:\n'
 
-        items_left = ArmoryFormatter.__get_item_output(0, 6, player_items)
-        response_details = response_details + items_left
+        items_0 = ArmoryFormatter.__get_item_output(0, 4, player_items)
+        response_details = response_details + items_0
 
         response.append(response_details)
 
-        items_right = ArmoryFormatter.__get_item_output(6, 14, player_items)
-        items_bottom = ArmoryFormatter.__get_item_output(14, len(player_items), player_items)
+        items_1 = ArmoryFormatter.__get_item_output(4, 8, player_items)
+        response.append(items_1)
 
-        response.append(items_right)
-        response.append(items_bottom)
+        items_2 = ArmoryFormatter.__get_item_output(8, 12, player_items)
+        response.append(items_2)
+
+        items_3 = ArmoryFormatter.__get_item_output(12, 14, player_items)
+        response.append(items_3)
+
+        items_4 = ArmoryFormatter.__get_item_output(14, len(player_items), player_items)
+        response.append(items_4)
 
         return response
 
