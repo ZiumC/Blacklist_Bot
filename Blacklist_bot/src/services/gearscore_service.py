@@ -1,14 +1,10 @@
 """source code found at:
     # https://github.com/Rdyx/warmane-armory-bot/blob/master/src/gearScore.py
-    # Very thank you author for that!
+    # Thank you author for that!
 """
 
 
-def get_item_gear_score(player_item):
-    item_type = player_item.inventory_type
-    item_level = player_item.item_lvl
-    item_quality = player_item.quality
-
+def get_item_gear_score(item_type, item_level, item_quality):
     # Need to include also Shields. They are just Off-Hands
     # Items like: Librams, Idols, Sigls etc. in itemDb they have None type
     if item_type == 'Shield':
