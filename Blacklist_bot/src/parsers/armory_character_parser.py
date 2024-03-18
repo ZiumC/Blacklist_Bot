@@ -2,7 +2,6 @@ import config as conf
 from utils import request_util as request
 from parsers import item_parser
 from models import item_model as im
-from services import gearscore_service as gs
 import re
 from typing import Final
 
@@ -58,8 +57,7 @@ def __get_player_items(html_document):
     items_data.extend(__extract_item_data(html_document, DIV_BOTTOM_REGEX, ITEM_DATA_REGEX, False))
 
     item_objects = []
-    items_type = []
-    items_gs = []
+
     for item in items_data:
         item_id = item.split('&')[0]
         item_enchant = __get_additions_item_(item, ENCHANT_REGEX)
@@ -70,14 +68,10 @@ def __get_player_items(html_document):
         if not isinstance(player_item, im.Item):
             return player_item
 
-        item_gs = gs.get_item_gear_score(player_item)
-
-        items_type.append(player_item.inventory_type)
-        items_gs.append(item_gs)
 
         item_objects.append(player_item)
 
-    return item_objects, __calculate_player_gs(items_type, items_gs)
+    return item_objects, __calculate_player_gs(item_objects)
 
 
 """This method is required because gs was calculated incorrectly for some classes.
@@ -87,24 +81,25 @@ def __get_player_items(html_document):
 """
 
 
-def __calculate_player_gs(items_type, items_gs):
-    if len(items_type) != len(items_gs):
+def __calculate_player_gs(items):
+    if len(items) == 0:
         return -1
 
     gs_sum = 0
-    for i in range(0, len(items_type)):
-        if items_type[i] == 'One-Hand' or items_type[i] == 'Two-Hand':
+    for i in range(0, len(items)):
+        if items[i].inventory_type == 'One-Hand' or items[i].inventory_type == 'Two-Hand':
             continue
-        gs_sum = gs_sum + items_gs[i]
+        gs_sum = gs_sum + items[i].item_gs
 
-    weapon_indexes = [i for i, item in enumerate(items_type) if item == 'One-Hand' or item == 'Two-Hand']
+    weapon_indexes = [i for i, item in enumerate(items)
+                      if item.inventory_type == 'One-Hand' or item.inventory_type == 'Two-Hand']
     duplicated_weapon_avg_gs = 0
 
     if len(weapon_indexes) == 1:
-        gs_sum = gs_sum + items_gs[weapon_indexes[0]]
+        gs_sum = gs_sum + items[weapon_indexes[0]].item_gs
     else:
         for i in range(0, len(weapon_indexes)):
-            duplicated_weapon_avg_gs = duplicated_weapon_avg_gs + items_gs[weapon_indexes[i]]
+            duplicated_weapon_avg_gs = duplicated_weapon_avg_gs + items[weapon_indexes[i]].item_gs
         duplicated_weapon_avg_gs = (duplicated_weapon_avg_gs / 2)
     return gs_sum + duplicated_weapon_avg_gs
 

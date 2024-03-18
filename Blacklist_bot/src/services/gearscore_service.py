@@ -1,22 +1,18 @@
 """source code found at:
     # https://github.com/Rdyx/warmane-armory-bot/blob/master/src/gearScore.py
-    # Very thank you author for that!
+    # Thank you author for that!
 """
 
 
-def get_item_gear_score(player_item):
-    item_type = player_item.inventory_type
-    item_level = player_item.item_lvl
-    item_quality = player_item.quality
-
+def get_item_gear_score(item_type, item_level, item_quality):
     # Need to include also Shields. They are just Off-Hands
     # Items like: Librams, Idols, Sigls etc. in itemDb they have None type
     if item_type == 'Shield':
         item_type = 'Off-Hand'
-    elif item_type == 'None' and item_quality == str(0):
+    elif item_type == 'None' and item_quality == '0':
         item_type = 'Relic'
         item_quality = '4'
-    elif item_quality == str(0):
+    elif item_quality == '0':
         item_quality = '4'
 
     if item_type in ['Shirt', 'Tabard']:
@@ -38,7 +34,7 @@ def __create_gear_score():
     # Rare, Epic
     # We use this because items with ilvl 200 can be Rare, Epic or Legendary
     item_rarities = ['3', '4', '5']
-    item_levels = [200, 213, 219, 226, 232, 239, 245, 251, 258, 264, 271, 272, 277, 284]
+    item_levels = [200, 213, 219, 226, 232, 239, 245, 251, 258, 259, 264, 268, 271, 272, 277, 284]
     item_slots = [
         'Head', 'Chest', 'Robe', 'Legs', 'Main Hand',
         'One-Hand', 'Off-Hand', 'Held In Off-hand', 'Shoulder',
@@ -51,27 +47,27 @@ def __create_gear_score():
         'Head', 'Chest', 'Robe', 'Legs',
         'Main Hand', 'One-Hand', 'Off-Hand', 'Held In Off-hand'
     ]
-    highest_gs_slots_values = [271, 310, 348, 365, 385, 402, 422, 439, 457, 477, 494, 514, 523, 531, 551]
+    highest_gs_slots_values = [271, 310, 348, 365, 385, 402, 422, 439, 457, 477, 482, 494, 504, 514, 523, 531, 551]
 
     second_highest_gs_slots_names = ['Shoulder', 'Hands', 'Waist', 'Feet']
     second_highest_gs_slots_values = [
         203, 233, 261, 274, 289,
-        301, 316, 329, 342, 357, 370, 385, 391, 398, 413
+        301, 316, 329, 342, 357, 360, 370, 374, 385, 391, 398, 413
     ]
 
     middle_gs_slots_names = ['Neck', 'Cloak', 'Wrist', 'Finger', 'Trinket']
     middle_gs_slots_values = [
         152, 174, 195, 205, 216, 226,
-        237, 247, 257, 268, 278, 289, 290, 298, 310
+        237, 247, 257, 268, 269, 278, 283, 289, 290, 298, 310
     ]
 
     ranged_gs_slot_names = ['Ranged', 'Relic', 'Thrown', 'Ranged Right']
-    ranged_gs_slot_values = [86, 98, 110, 115, 121, 127, 133, 139, 144, 150, 156, 162, 165, 168, 174]
+    ranged_gs_slot_values = [86, 98, 110, 115, 121, 127, 133, 139, 144, 150, 153, 156, 158, 162, 165, 168, 174]
 
     two_hand_gs_slot_name = ['Two-Hand']
     two_hand_gs_slot_values = [
         543, 621, 696, 730, 770, 805,
-        845, 879, 914, 954, 988, 1028, 1045, 1062, 1103
+        845, 879, 914, 954, 967, 988, 999, 1028, 1045, 1062, 1103
     ]
 
     # Those items are sharing ilvl with epics equivalent but have

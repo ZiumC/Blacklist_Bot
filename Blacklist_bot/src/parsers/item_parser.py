@@ -3,6 +3,7 @@ import config as conf
 from models import item_model as im
 from models import enchant_model as ench
 import services.file_service as file
+from services import gearscore_service as gs
 
 
 class ItemAdditionType(Enum):
@@ -68,9 +69,11 @@ def create_player_item(item_id, enchant_data, gems_data):
     item_type = __get_item_property(raw_item_array, ItemCategories.ITEM_TYPE.value)
     required_lvl = __get_item_property(raw_item_array, ItemCategories.ITEM_REQUIRED_LEVEL.value)
     has_sockets = __get_item_property(raw_item_array, ItemCategories.ITEM_HAS_SOCKETS.value)
+    item_gs = gs.get_item_gear_score(inventory_type, item_lvl, quality)
 
     player_item = im.Item(item_id, item_name, item_lvl, quality,
-                          inventory_type, item_type, required_lvl, has_sockets)
+                          inventory_type, item_type, required_lvl,
+                          has_sockets, item_gs)
 
     if item_type in non_enchanted_weapons:
         pass

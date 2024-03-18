@@ -167,9 +167,9 @@ class ArmoryFormatter:
         character_info, guild_name, guild_link, player_items, player_gs = \
             armory_parser.character_armory(username)
 
-        if ((str(80) not in character_info) and
-                (not guild_name) and (not guild_link) and
-                (not player_items) and (not player_gs)):
+        if ((str(80) not in character_info) or
+                ((not guild_name) and (not guild_link) and
+                 (not player_items) and (not player_gs))):
             return [emoji.ORANGE_CIRCLE + ' Player **' + username + '** not found in warmane armory ' + emoji.THINKING]
 
         player_url = conf.ARMORY_URL + username + conf.ARMORY_SERVER
@@ -193,20 +193,36 @@ class ArmoryFormatter:
                 warning_has_added = True
                 break
 
+        item_has_0_gs = False
+        for item in player_items:
+            if str(item.item_gs) == '0':
+                item_has_0_gs = True
+
         if not warning_has_added:
-            response_details = response_details + '> **GearScore**: ' + str(int(player_gs)) + '\n'
+            if item_has_0_gs:
+                response_details \
+                    = (response_details + '> **GearScore**: ' +
+                       str(int(player_gs)) + ' ' + emoji.WARNING + ' _(one or many items has 0 GS)_\n')
+            else:
+                response_details = response_details + '> **GearScore**: ' + str(int(player_gs)) + '\n'
         response_details = response_details + '> **Gear**:\n'
 
-        items_left = ArmoryFormatter.__get_item_output(0, 6, player_items)
-        response_details = response_details + items_left
+        items_0 = ArmoryFormatter.__get_item_output(0, 4, player_items)
+        response_details = response_details + items_0
 
         response.append(response_details)
 
-        items_right = ArmoryFormatter.__get_item_output(6, 14, player_items)
-        items_bottom = ArmoryFormatter.__get_item_output(14, len(player_items), player_items)
+        items_1 = ArmoryFormatter.__get_item_output(4, 8, player_items)
+        response.append(items_1)
 
-        response.append(items_right)
-        response.append(items_bottom)
+        items_2 = ArmoryFormatter.__get_item_output(8, 12, player_items)
+        response.append(items_2)
+
+        items_3 = ArmoryFormatter.__get_item_output(12, 14, player_items)
+        response.append(items_3)
+
+        items_4 = ArmoryFormatter.__get_item_output(14, len(player_items), player_items)
+        response.append(items_4)
 
         return response
 
@@ -240,6 +256,12 @@ class ArmoryFormatter:
                     gem_data = ''
                 else:
                     gem_data = gem_data + str(item.gems) + ' ' + emoji.GEM + '\n'
+
+                missing_gs = ''
+                if str(0) == str(item.item_gs):
+                    missing_gs = ('>' + emoji.LONG_LONG_SPACE + '__Item GS__: '
+                                  + str(item.item_gs) + ' ' + emoji.WARNING + '\n')
+                gem_data = gem_data + missing_gs
             else:
                 item_data = item
 
