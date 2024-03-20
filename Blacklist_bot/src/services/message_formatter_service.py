@@ -244,8 +244,11 @@ class ArmoryFormatter:
                     enchant_url = conf.ITEM_DATABASE_URL_1 + item.enchant.item_id
                     enchant_data = (enchant_data + '[' + item.enchant.name + '](<' + enchant_url + '>) ' +
                                     emoji.CHECK + '\n')
-                elif item.enchant == ' Missing':
+                elif item.enchant == 'Missing':
                     enchant_data = enchant_data + item.enchant + ' ' + emoji.CROSS + '\n'
+                elif 'Exist on item' in item.enchant:
+                    enchant_data = enchant_data + item.enchant + ' ' + emoji.CHECK + '\n'
+                    enchant_data = enchant_data + '>' + emoji.LONG_LONG_SPACE + '_(Translation enchantID -> itemID notfound)_\n'
                 else:
                     enchant_data = ''
 
