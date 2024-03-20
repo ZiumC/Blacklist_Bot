@@ -1,6 +1,6 @@
 <p align="center">
   <img alt="Static Badge" src="https://img.shields.io/badge/python-3.9_%7C_3.10-blue">
-  <img alt="Static Badge" src="https://img.shields.io/badge/bot_version-2.2.1-purple">
+  <img alt="Static Badge" src="https://img.shields.io/badge/bot_version-2.2.2-purple">
   <img alt="GitHub last commit (by committer)" src="https://img.shields.io/github/last-commit/ZiumC/Blacklist_Bot">
 </p>   
   
@@ -130,6 +130,7 @@ To run that bot on your discord server you should create 2 separate channels. Fi
     
 # Packages used
 - discord.py (2.3.0)
+- requests
 - os
 - re
 - logging
