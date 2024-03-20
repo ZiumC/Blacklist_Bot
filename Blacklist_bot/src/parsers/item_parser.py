@@ -105,7 +105,7 @@ def __create_enchant(enchant_data_line):
     item_id = __translate_addition_to_item_id(enchant_id, ItemAdditionType.ENCHANT.value)
 
     if item_id == -1:
-        return conf.DEFAULT_NOT_EXIST_VALUE + " but exist on item"
+        return 'Exist on item'
 
     raw_enchant_array = __get_raw_item_data(item_id).split(conf.SEPARATOR)
     item_name = __get_item_property(raw_enchant_array, ItemCategories.ITEM_NAME.value)
