@@ -1,0 +1,5 @@
+02/08/2026 14:10:40 INFO ---- new run ----
+02/08/2026 14:10:40 INFO logging in using static token
+02/08/2026 14:10:41 INFO Shard ID None has connected to Gateway (Session ID: bb70b5de26527fdba36599bfa6fd5f7e).
+02/08/2026 14:11:26 INFO Public command: user=2ayy4kek,message=!check Ziuumm
+02/08/2026 14:11:26 WARNING Empty line has been returned: player=ziuumm,method=get_user_data
